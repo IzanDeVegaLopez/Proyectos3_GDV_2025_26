@@ -41,9 +41,8 @@ classDiagram
 	GameManager *-- SystemManager
 	SystemManager --> "0..*" System
 	EntityManager --> "0..*" Entity
-	ComponentManager --> "0..*" Component
-	Component <|-- Transform3D  
-	Component <|-- Transform2D
+	ComponentManager *-- Transform3D  
+	ComponentManager *-- Transform2D
 	System <|-- CollisionSystem
 	SparseSet <|-- SparseDataSet
 	class Entity{
@@ -72,9 +71,10 @@ classDiagram
 		+has<Component>(int entityId, int componentId) bool
 	}
 	class GameManager{
-		-EntityManager& mEntityManager
-		-ComponentManager& mComponentManager
-		-SystemManager& mSystemManager
+		# game manager owns its parts
+		-EntityManager mEntityManager
+		-ComponentManager mComponentManager
+		-SystemManager mSystemManager
 	}
     class EntityManager{
         -SparseSet~int~ allEntities
@@ -132,10 +132,9 @@ classDiagram
 - La index de cada componente en la lista se decide durante la precompilación
 - Cada entidad solo puede tener anexado un componente de cada tipo.
 
-### Component
-- Contenedores de información anexables a una entidad
-- Es una clase abstracta de la que heredaran los componentes reales del juego
-
+### Components
+- They need not to follow any inheritance constraint. Other than it is heavily encouraged to be as dependent on as few other external data as possible. 
+- It is reccomended to keep structure size and alignment as small as possible.
 
 # **Estructura de componentes del motor y juegos**
 
