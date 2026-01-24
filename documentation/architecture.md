@@ -61,10 +61,15 @@ classDiagram
 		+update(double dt, GameManager&)*
 	}
 	class ComponentManager{
-		-vector~vector~bool~~ mComponentsFlagsPerEntity
-		-vector~SparseSet~Component~~~ mComponentsPerEntity
-		+getComponent(int entityId, int componentId) Component&
-		+hasComponent(int entityId, int componentId) bool
+		%% these SparseSets are type erased,
+		%% size of component is passed at runtime
+		-vector~SparseSet~ mComponentsPerEntity
+
+		+get<Component>(int entityId, int componentId) Component [const]&
+		+emplace<Component>(int entityId, int componentId) Component&
+		+insert<Component>(int entityId, int componentId, Component const& component)
+		+remove<Component>(int entityId, int componentId)
+		+has<Component>(int entityId, int componentId) bool
 	}
 	class GameManager{
 		-EntityManager& mEntityManager
