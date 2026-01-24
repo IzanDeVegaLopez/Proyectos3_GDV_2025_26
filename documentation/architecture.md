@@ -64,11 +64,11 @@ classDiagram
 		# size of component is passed at runtime
 		-vector~SparseSet~ mComponentsPerEntity
 
-		+get<Component>(int entityId, int componentId) Component [const]&
-		+emplace<Component>(int entityId, int componentId) Component&
-		+insert<Component>(int entityId, int componentId, Component const& component)
-		+remove<Component>(int entityId, int componentId)
-		+has<Component>(int entityId, int componentId) bool
+		+get~Component~(int entityId, int componentId) Component [const]&
+		+emplace~Component~(int entityId, int componentId) Component&
+		+insert~Component~(int entityId, int componentId, Component const& component)
+		+remove~Component~(int entityId, int componentId)
+		+has~Component~(int entityId, int componentId) bool
 	}
 	class GameManager{
 		# game manager owns its parts
