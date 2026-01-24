@@ -1,6 +1,64 @@
 
 # **Estructura de la solución y proyectos (y repositorios de Git)** 
 
+### ENGINE-GAME CONTROL FLOW 
+
+```txt
+        |------------------------------------------> Time
+        |
+Game    |    1----2    3----o----4    5----6
+        |    |    |    |         |    |    |
+        |----|----|----|---------|----|----|------->
+        |    |    |    |         |    |    |
+Engine  0----1    2----3      <--4----5    6-------x
+        |
+        |------------------------------------------>
+
+0: Main
+    CONTROL: Engine
+    Engine Initialization.
+
+1: Game Main
+    CONTROL: Engine to Game
+    Gameplay Initialization.
+
+2: Engine Loop Start
+    CONTROL: Game to Engine
+    Stuff that needs to be done
+    each frame before giving control
+    back to game.
+
+3: Game Loop Start
+    CONTROL: Engine to Game
+    Our game Gameplay Loop
+    Includes doing things in/with
+    SYSTEMS.
+
+4: Game Loop End
+    CONTROL: Game to Engine
+    The game loop update function
+    is DONE.
+    Engine may do stuff about the frame,
+    for example, clear temporary data.
+    Here if the game has not signaled
+    that it wants to EXIT, control goes
+    back to the Engine Loop Start (2).
+    If the game has signaled EXIT,
+    control goes to Engine Shutdown (5).
+
+5: Game Shutdown
+    CONTROL: Engine to Game
+    The game is exiting.
+    Do any game-specific shutdown stuff,
+    like saving game data.
+
+6: Engine Shutdown
+    CONTROL: Game to Engine
+    The engine is exiting.
+    Do any engine-specific shutdown stuff,
+    like freeing engine resources.
+```
+
 # **Estructura de las clases** 
 Documentación de Mermaid para construir los gráficos: https://mermaid.js.org/syntax/classDiagram.html
 ---
