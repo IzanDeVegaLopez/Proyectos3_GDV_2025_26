@@ -21,6 +21,7 @@ Engine  0----1    2----3      <--4----5    6-------x
 1: Game Main
     CONTROL: Engine to Game
     Gameplay Initialization.
+	Función Asociada: gameInit()
 
 2: Engine Loop Start
     CONTROL: Game to Engine
@@ -33,6 +34,7 @@ Engine  0----1    2----3      <--4----5    6-------x
     Our game Gameplay Loop
     Includes doing things in/with
     SYSTEMS.
+	Función Asociada: gameLoop()
 
 4: Game Loop End
     CONTROL: Game to Engine
@@ -51,6 +53,7 @@ Engine  0----1    2----3      <--4----5    6-------x
     The game is exiting.
     Do any game-specific shutdown stuff,
     like saving game data.
+	Función Asociada: gameEnd()
 
 6: Engine Shutdown
     CONTROL: Game to Engine
@@ -106,9 +109,6 @@ classDiagram
 	class Entity{
 		-alive
 		+isAlive() : bool
-	}
-	class Component{
-		+init(...)*
 	}
 	class SystemManager{
 		-vector~System~ mSystemList
@@ -175,24 +175,21 @@ classDiagram
 
 ### EntityManager
 - Contiene la lista (SparseSet) con todas las entidades vivas.
-- Contiene los grupos y escenas. Estos solo son listas con los identificadores de las entidades que contienen
-- Es el responsable de que todas las entidades que contiene sean validas. Para ello en su update, al inicio de cada bucle de juego recorrera todos los grupos y escenas eliminando de ellos las entidades marcadas como muertas. Después de esto y secuencialmente eliminará dichas entidades del SparseSet allEntities.
-- Una vez haya eliminado todas las entidades muertas procederá a insertar en los grupos y escenas correspondientes a todas aquellas entidades que fueron creadas durante el anterior frame. Estas se almacenan en entitiesCreatedLastFrameQueue
+- Todas las entidades que contiene serán siempre validas
 
-### SparseSet
+### SparseSet y SparseDataSet
 - Referencia https://skypjack.github.io/2020-08-02-ecs-baf-part-9/
 - Contiene un set disperso, de índices; un set denso, de datos (componentes); y un set de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el set disperso
 - Tiene una sobrecarga específica con ningún tipo, que evita que se guarde el set de datos
 
-### Entity
-- Su característica principal es un identificador único implicito. Este se corresponde con el indice que le corresponde a cada entidad en el DenseArray que las contiene. El indice que contienen los grupos y escenas que tienen a esta entidad en su interior es este mismo identificador
-- Contiene un vector de componentes
-- La index de cada componente en la lista se decide durante la precompilación
-- Cada entidad solo puede tener anexado un componente de cada tipo.
-
 ### Components
 - They need not to follow any inheritance constraint. Other than it is heavily encouraged to be as dependent on as few other external data as possible. 
 - It is reccomended to keep structure size and alignment as small as possible.
+
+## Funcionamiento Físicas
+- Cuando hay colisión entre dos entidades se añade un componente a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
+- A la hora de crear el juego se podrán consultar las colisiones de una entidad con getEntityCollisions(int entityId), que devolverá una lista de indices.
+- Para que se calculen las colisiones entre dos objetos, ambos deben tener el componente Collider
 
 # **Estructura de componentes del motor y juegos**
 
