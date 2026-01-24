@@ -61,8 +61,8 @@ classDiagram
 		+update(double dt, GameManager&)*
 	}
 	class ComponentManager{
-		%% these SparseSets are type erased,
-		%% size of component is passed at runtime
+		# these SparseSets are type erased,
+		# size of component is passed at runtime
 		-vector~SparseSet~ mComponentsPerEntity
 
 		+get<Component>(int entityId, int componentId) Component [const]&
