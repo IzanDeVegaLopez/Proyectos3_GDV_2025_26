@@ -32,9 +32,25 @@ Las variables tienen que comenzar con un nombre como primera palabra
 
 - Constantes: nombre completo en mayúsculas y separado por barras bajas (los prefijos no cambian a mayúsculas aunque sean constantes). Ejemplo: “VALOR\_CONSTANTE”
 
-## **Clases:**
+## **Clases (y Structs) :**
 
 Las clases tienen que comenzar con un nombre como primera palabra y usar “Pascal Case”. Es decir. La primera letra es mayúscula. Ejemplo: “BombaAmarilla”
+
+## **Enums:**
+
+Los tipos creados por un enum se nombran igual que las clases, con Pascal Case (p.ej: MiEnumerado) y deberan comenzar por un sustantivo.
+Cada uno de los nombres de los valores dentro de un enum se nombran como una constante. Y todos los valores de un enumerado deberán estar precedidos por el mismo prefijo integramente en mayusculas. Este prefijo deberá mostrar a que enumerado hacen referencian. Esto es así para evitar conflictos entre constantes enumeradas en el caso de usar namespaces.
+
+Preferiblemente escribid dentras del nombre del tipo ": int_type". Para así acotar el tamaño de vuestro enumerado según el rango de valores que pueda tomar. Generalmente sobrará con uint8_t (necesario incluir stdint), pero en el caso de hacer flags binarias, el número de bits del tipo, será el número de posibles valores.
+
+Por ejemplo:
+```cpp
+enum AttackType : uint8_t{
+  ATKTYPE_SLASH = 1,
+  ATKTYPE_ARCANE = 1 << 1,
+  ATKTYPE_SLIME = 1 << 2 
+}
+```
 
 ## **Métodos y funciones:**
 
