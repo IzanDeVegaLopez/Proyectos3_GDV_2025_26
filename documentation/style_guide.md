@@ -1,6 +1,6 @@
 ## **Reglas Generales:**
 
-**Se utilizará camel case en todo el proyecto** a menos que se diga lo contrario en alguna parte de este documento. Snake case es “miVariable”
+**Se utilizará camel case en todo el proyecto** a menos que se diga lo contrario en alguna parte de este documento. Camel Case es “miVariable”
 
 Todos los nombres han de ser claros de su función o contenido. Además todos los métodos públicos de una clase deberán tener una descripción de uso.
 
