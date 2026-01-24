@@ -44,6 +44,7 @@ classDiagram
 	ComponentManager --> "0..*" Component
 	Component <|-- Transform3D  
 	Component <|-- Transform2D
+	System <|-- CollisionSystem
 	SparseSet <|-- SparseDataSet
 	class Entity{
 		-alive
