@@ -1,0 +1,27 @@
+Deberías tener cmake instalado en tu ordenador
+
+- Después abre con vscode una de las carpetas con 
+    un CMakeLists.txt
+- Pulsa ctrl+ñ para abrir la terminal en vscode
+    si no esta abierta ya
+- escribe cmake --version. Si no te dice la versión y 
+    da un error, tendrás que revisar tu instalación de cmake, 
+    volver a cerrar y abrir vscode, reset ordenador, desinstalar e instalar...
+- cuando sepas que cmake está funcional escribe
+    cmake -B path
+        path es una ruta
+        y -B es una flag que le dice que use rutas relativas
+        al path que le has dado
+    cmake --build path
+        path debe ser la misma ruta que en el anterior comando
+        esto construye el proyecto y el ejecutable
+- Ya podemos ejecutar nuestro proyecto si no ha habido ningún problema
+    para ello buscaremos el .exe dentro de la carpeta path
+    Puede estar en la carpeta path
+        Ejecutar: "path/project_name.exe"
+    O bien en vscode por defecto en:
+        Ejecutar "path/Debug/project_name.exe"
+    El project name lo podemos encontrar en el CMakeLists.txt del proyecto que queremos construir
+    Este nombre esta dentro del comando 
+        project(game_plugin)
+    Si hay varios será aquel que tenga debajo la instrucción "add_executable"
