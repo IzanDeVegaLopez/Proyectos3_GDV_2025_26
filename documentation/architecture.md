@@ -1,6 +1,8 @@
 
 # **Estructura de la solución y proyectos (y repositorios de Git)** 
 
+La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
+
 ### ENGINE-GAME CONTROL FLOW 
 
 ```txt
@@ -104,11 +106,17 @@ classDiagram
 	EntityManager --> "0..*" Entity
 	ComponentManager *-- Transform3D  
 	ComponentManager *-- Transform2D
+	ComponentManager *-- CollisionComponent
+	ComponentManager *-- ColliderComponent
 	System <|-- CollisionSystem
 	SparseSet <|-- SparseDataSet
 	class Entity{
 		-alive
 		+isAlive() : bool
+	}
+	class LogManager{
+		+constructor(string file_name)
+		+printLog(string format, ...)
 	}
 	class SystemManager{
 		-vector~System~ mSystemList
@@ -159,17 +167,43 @@ classDiagram
 		-insertElement(int index)
 		-eraseElement(int index)
     }
-	class Transform3D{
+	class Transform3DComponent{
 		+vector3~float~ position
 		+vector3~float~ scale
 		+Quaternion~float~ orientation
 	}
-	class Transform2D{
+	class Transform2DComponent{
 		+vector2~float~ pos
 		+vector2~float~ scale
 		+float rotation
 	}
+	class CollisionComponent{
+		int entitiesCollidedWith[10]
+		uint8_t collisionNumber
+	}
+	class ColliderComponent{
+
+	}
 ```
+
+## RAII
+Todas nuestras clases usarán la técnica de programación RAII: https://en.cppreference.com/w/cpp/language/raii.html.
+
+### Aplicación de RAII
+- Encapsular cada recurso en una clase, donde:
+	- el constructor reserva el recurso y se asegura de instaurar todos los invariantes de representación o lanzar una excepción si esto es imposible
+	- el destructor libera el recurso y nunca lanzará excepciones
+- Siempre usar el recurso via una instancia de una clase que aplique RAII y que cumpla una de estas dos:
+	- Tiene tiempo automatico de almacenamiento o tiempo de vida finito.
+	- Tiene un tiempo de vida confinado por un objeto automático o de vida finita
+
+Esto implica que aquellas clases que requieran reservar memoria para funcionar se ocuparan de liberarla automáticamente en su destrucción.
+Es decir, el tiempo de vida de un recurso será menor o igual al tiempo de vida del objeto que lo contiene.
+
+### Finalidad
+El uso de RAII pretende conseguir:
+- Que no haya memory leaks
+- Que no pueda haber acceso a regiones de memoria sin inicializar o con basura
 
 ## Clases Importantes
 
@@ -177,19 +211,31 @@ classDiagram
 - Contiene la lista (SparseSet) con todas las entidades vivas.
 - Todas las entidades que contiene serán siempre validas
 
+### ComponentManager
+- Contiene una lista por tipo de componente posible
+- La misma posición de distintas listas de componentes serán componentes pertenecientes a la misma entidad. Esta posición además coincidirá con la posición de la entidad en la lista de entidades del EntityManager
+- Las listas de componentes
+
 ### SparseSet y SparseDataSet
 - Referencia https://skypjack.github.io/2020-08-02-ecs-baf-part-9/
 - Contiene un set disperso, de índices; un set denso, de datos (componentes); y un set de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el set disperso
-- Tiene una sobrecarga específica con ningún tipo, que evita que se guarde el set de datos
+- El tamaño que ocupa el set de datos solo se conoceré en runtime, es decir, guardará objetos de tipo desconocido. Pero en ejecución será capaz de devolver el objeto del tipo que realmente almacena.
 
 ### Components
-- They need not to follow any inheritance constraint. Other than it is heavily encouraged to be as dependent on as few other external data as possible. 
-- It is reccomended to keep structure size and alignment as small as possible.
+- No heredarán de una clase base. Se recomienda que sean tan independientes como sea posible. Y que requieran el mínimo de información externa posible.
+- Recomendable mantener la estructura y el alineamiento tan pequeño como se pueda.
+
+### LogManager
+- Todos los mensajes sacados por el motor o por el juego serán producidos por una instancia de esta clase
+- Los mensajes serán reflejados en un fichero contenido en la carpeta logs del proyecto.
+- Todos los mensajes impresos con esta clase llevarán hora, minutos y segundos. Y se imprimirán en el orden en el que se hacen las llamadas al LogManager
+- Usa la sintaxis del printf de c
 
 ## Funcionamiento Físicas
-- Cuando hay colisión entre dos entidades se añade un componente a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
+- Cuando hay colisión entre dos entidades se añade un componente (CollisionComponent) a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
 - A la hora de crear el juego se podrán consultar las colisiones de una entidad con getEntityCollisions(int entityId), que devolverá una lista de indices.
-- Para que se calculen las colisiones entre dos objetos, ambos deben tener el componente Collider
+- Para que dos objetos puedan tener una colision detectada entre sí, ambos deben tener el componente Collider
+
 
 # **Estructura de componentes del motor y juegos**
 
