@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.30)
-add_compile_options(
-    -Wall
-    -Werror
-    -Wextra
-    -Wpedantic
-)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_compile_options(
+        -Wall
+        -Wextra 
+        -Werror 
+        -Wpedantic 
+    )
+else()
+    add_compile_options(/W4)
+endif()
 
 project(engine)
     add_executable(${PROJECT_NAME} engine.c)

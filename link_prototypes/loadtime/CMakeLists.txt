@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.30)
-if (MSVC)
-    # warning level 4
-    add_compile_options(/W4)
-else()
-    # additional warnings
+
+if(CMAKE_COMPILER_IS_GNUCXX)
     add_compile_options(
-        -Wall 
-        -Werror
+        -Wall
         -Wextra 
-        -Wpedantic
+        -Werror 
+        -Wpedantic 
     )
+else()
+    add_compile_options(/W4)
 endif()
 
 project(engine)

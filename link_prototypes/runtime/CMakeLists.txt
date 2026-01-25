@@ -1,17 +1,15 @@
 cmake_minimum_required(VERSION 3.30)
-if (MSVC)
-    # warning level 4
-    add_compile_options(/W4)
-else()
-    # additional warnings
-    add_compile_options(
-        -Wall 
-        -Werror
-        -Wextra 
-        -Wpedantic
-    )
-endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_compile_options(
+        -Wall
+        -Wextra 
+        -Werror 
+        -Wpedantic 
+    )
+else()
+    add_compile_options(/W4)
+endif()
 project(engine)
     add_executable(${PROJECT_NAME} engine.c)
     set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
