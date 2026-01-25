@@ -1,17 +1,22 @@
 cmake_minimum_required(VERSION 3.30)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    add_compile_options(
-        -Wall
-        -Wextra 
-        -Werror 
-        -Wpedantic 
-    )
-else()
-    add_compile_options(/W4)
-endif()
-
 project(engine)
+    if(MSVC)
+        message(STATUS "Adding safety warnings to: MSVC")
+        add_compile_options(
+            /W4
+            /WX
+        )
+    else()
+        message(STATUS "Adding safety warnings to: GCC or Clang")
+        add_compile_options(
+            -Wall
+            -Wextra 
+            -Werror 
+            -Wpedantic 
+        )
+    endif()
+    
     add_executable(${PROJECT_NAME} engine.c)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENGINE_EXPORT=true)
 
