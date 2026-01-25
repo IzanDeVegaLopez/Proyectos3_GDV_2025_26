@@ -104,8 +104,8 @@ classDiagram
 	GameManager *-- SystemManager
 	SystemManager --> "0..*" System
 	EntityManager --> "0..*" Entity
-	ComponentManager *-- Transform3D  
-	ComponentManager *-- Transform2D
+	ComponentManager *-- Transform3DComponent  
+	ComponentManager *-- Transform2DComponent
 	ComponentManager *-- CollisionComponent
 	ComponentManager *-- ColliderComponent
 	System <|-- CollisionSystem
