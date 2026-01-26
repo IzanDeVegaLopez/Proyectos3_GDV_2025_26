@@ -371,21 +371,21 @@ Aunque crearemos un capa de abstracción para que conceptualmente sean algo dist
 ### Ejemplo completo
 |					   |   |   |   |   |   |   |   |   |   |
 |----------------------|---|---|---|---|---|---|---|---|---|
-|**Entity SparseSet**||||||||||
+|**Entity SparseSet**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | 2 | - | 0 | - | 1 | - | - | 3 |
 | Backlink Dense Array | 3 | 5 | 1 | 8 | - | - | - | - | - |
-|**Component A SparseSet**||||||||||
+|**Component A SparseSet**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | 2 | - | 1 | - | 0 | - | - | - |
 | Backlink Dense Array | 5 | 3 | 1 | - | - | - | - | - | - |
 | Data Dense Array 	   | Info_5 | Info_3 | Info_1 | - | - | - | - | - | - |
-|**Component B SparseSet**||||||||||
+|**Component B SparseSet**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | 0 | - | - | - | - | - | - | 1 |
 | Backlink Dense Array | 1 | 8 | - | - | - | - | - | - | - |
 | Data Dense Array 	   | Info_1 | Info_8| - | - | - | - | - | - | - |
-|**Group A SparseSet (In reality Component C)**||||||||||
+|**Group A SparseSet (In reality Component C)**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | - | - | 0 | - | 1 | - | - | 2 |
 | Backlink Dense Array | 3 | 5 | 8 | - | - | - | - | - | - |
-|**Scene A SparseSet (In reality Component D)**||||||||||
+|**Scene A SparseSet (In reality Component D)**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | 2 | - | 1 | - | 0 | - | - | 3 |
 | Backlink Dense Array | 5 | 3 | 1 | 8 | - | - | - | - | - |
 
