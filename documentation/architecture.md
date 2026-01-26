@@ -304,7 +304,7 @@ De forma que la array de antes quedaría así, tras añadir algo en la posición
 
 ##### Eliminación en O(1)
 La eliminación en esta estructura es también sencilla aunque no lo parezca a simple vista.
-Eliminaremos elementos también por indice. Dando una configuración no válida al elemento en la Index Disperse Array. E intercambiando el último elemento de la backlink con aquel que queremos eliminar. Abrá que actualizar el valor del index disperse array de aquel que hemos movido. Y habríamos concluido la eliminación.
+Eliminaremos elementos también por indice. Dando una configuración no válida al elemento en la Index Disperse Array. E intercambiando el último elemento de la backlink con aquel que queremos eliminar. Habrá que actualizar el valor del index disperse array de aquel que hemos movido. Y habríamos concluido la eliminación.
 Por ejemplo para eliminar el elemento con indice 5 del anterior SparseSet quedaría así:
 |					   |   |   |   |   |   |   |   |   |   |
 |----------------------|---|---|---|---|---|---|---|---|---|
