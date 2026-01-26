@@ -239,9 +239,92 @@ El uso de RAII pretende conseguir:
 
 # **Estructura de componentes del motor y juegos**
 
-Arquitectura basada en:   
-ECS:
-**Componentes**: contienen datos.
-**Sistemas**: contienen lógica. Se decide el orden de procesamiento de los sistemas. Y una única instancia de cada sistema (no pueden existir más) se ejecutará una vez por cada vuelta del bucle jugable. Los sistemas pueden acceder a las listas de todas las entidades con un mismo componente. Y obtener a partir de una entidad otros componentes de esta.
+## Arquitectura Escogida: ECS
+Usaremos como base para nuestra arquitectura el modelo Entity Componente System o ECS.
+
+Esta arquitectura tiene 3 componentes básicos:
+- **Entidades**: la entidad es la unidad minima de existencia de nuestro juego. Para que algo exista, se renderice o pueda tener parametros asociados habrá de ser una entidad. 
+Las entidades no albergan ningún tipo de información en su interior. Pero cada una tiene asignado un identificador implicito gracias a su representación con un SparseSet como se explicará más adelante.
+- **Componentes**: contienen unicamente datos serializables y públicos. Es decir, no podrán contener referencias ni punteros. En caso de necesitar un array de datos tendrán un buffer de tamaño constante autocontenido dentro del componente. 
+No podrán tener lógica, ni requerir información de otras instancias del mismo componente o de otros distintos. La única manera en la que podrán contener funciones o métodos es cuando estos sean atómicos (se modifican a si mismos para conservar los invariantes de representación) u obtengan infomación implicita en el componente.
+Su tamaño debería ser el menor posible.
+Cada entidad solo puede tener asociado un componente de cada tipo
+- **Sistemas**: contenedores de toda la lógica del juego. No podrán hacer llamadas a otros sistemas, pero si podrán obtener información así como modificarla de los componentes de cualquier entidad existente.
+
+## Implementación
+Usaremos extensivamente SparseSet para representar entidades, componentes y grupos de entidades.
+### Estructura de Datos: SparseSet
+- Referencia https://skypjack.github.io/2020-08-02-ecs-baf-part-9/
+- Contiene un array disperso, de índices; un array denso, de datos(opcional); y un array de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el array disperso
+- El tamaño que ocupa el set de datos solo se conoceré en runtime, es decir, guardará objetos de tipo desconocido. Pero en ejecución será capaz de devolver el objeto del tipo que realmente almacena.
+
+#### Objetivo:
+Esta estructura a cambio de algo más de memoria nos permitirá mejorar el rendimiento. Y nos facilitará la creación de varias características de nuestro motor. Como son las entidades, componentes, grupos y escenas.
+
+#### Implementación:
+De forma que almacenaríamos nuestras entidades en una estructura de datos como la siguiente:
+|					   |   |   |   |   |   |   |   |   |   |
+|----------------------|---|---|---|---|---|---|---|---|---|
+| Index Disperse Array (IdxDisperse) | - | 2 | - | 0 | - | 1 | - | - | - |
+| Backlink Dense Array (BackDense) | 3 | 5 | 1 | - | - | - | - | - | - |
+
+
+Cada elemento en la Index Disperse Array sería el indice de ese mismo elemento en la Backlink Dense Array y viceversa.
+Es decir si miramos el indice 2 de la backlink array este contendrá el indice de la posición del indice de la Disperse array en el que podemos encontrar ese dos.
+Por lo tanto se cumple el siguiente invariante de representación:
+```cpp
+	IdxDisperse[BackDense[i]] == i
+	BackDense[IdxDisperse[i]] == i
+```
+##### Inserción
+Insertar en esta estructura es sencillo.  Simplemente añadiremos al final de la lista de backlinks un nuevo elemento. Para insertar le daremos un indice. Este indice hará referencia a la array dispersa. Nos aseguraremos de que no haya nada ya en esa posición y si es así lo añadiremos a la dispersa.
+De forma que la array de antes quedaría así, tras añadir algo en la posición 8.
+|					   |   |   |   |   |   |   |   |   |   |
+|----------------------|---|---|---|---|---|---|---|---|---|
+| Index Disperse Array (IdxDisperse) | - | 2 | - | 0 | - | 1 | - | - | 3 |
+| Backlink Dense Array (BackDense) | 3 | 5 | 1 | 8 | - | - | - | - | - |
+```cpp
+	void insertar(int index){
+		IdxDisperse[index] = BackDense.size();
+		BackDense.push_back(index);
+	}
+```
+
+##### Eliminación
+La eliminación en esta estructura es también sencilla aunque no lo parezca a simple vista.
+Eliminaremos elementos también por indice. Dando una configuración no válida al elemento en la Index Disperse Array. E intercambiando el último elemento de la backlink con aquel que queremos eliminar. Abrá que actualizar el valor del index disperse array de aquel que hemos movido. Y habríamos concluido la eliminación.
+Por ejemplo para eliminar el elemento con indice 5 del anterior SparseSet quedaría así:
+|					   |   |   |   |   |   |   |   |   |   |
+|----------------------|---|---|---|---|---|---|---|---|---|
+| Index Disperse Array (IdxDisperse) | - | 2 | - | 0 | - | - | - | - | 1 |
+| Backlink Dense Array (BackDense) | 3 | 8 | 1 | - | - | - | - | - | - |
+```cpp
+	void eliminar(int index){
+		//back devuelve el último elemento del array
+		BackDense[IdxDisperse[index]] = BackDense.back();
+		IdxDisperse[BackDense.back()] = IdxDisperse[index];
+		BackDense.pop_back();
+		IdxDisperse[index] = NULL;
+	}
+```
+
+##### Añadiendo Datos:
+De momento solo estamos guardando indices en ambos arrays. Sin duda esto nos será útil para las entidades, grupos y escenas. Pero para los componentes queremos poder guardar su información y poder acceder a ella de forma eficiente. Para esto añadiremos un tercer array que almacenará los datos necesarios.
+
+Este tercer vector será también denso e imitará el comportamiento del vector denso de Backlinks.
+Es decir el elemento i de la lista de backlinks corresponde con la información guardada en el indice i del array de información.
+
+|					   |   |   |   |   |   |   |   |   |   |
+|----------------------|---|---|---|---|---|---|---|---|---|
+| Index Disperse Array | - | 2 | - | 0 | - | 1 | - | - | - |
+| Backlink Dense Array | 3 | 5 | 1 | - | - | - | - | - | - |
+| Data Dense Array 	   | Info_3 | Info_5 | Info_1 | - | - | - | - | - | - |
+
+### Uso de SparseSet para Entidades y Componentes:
+Para hacer que buscar entidades con un mismo componente así como poder recorrer todas las entidades usaremos un SparseSet base para todas las entidades y uno por componente.
+
+El **identificador** de cada <u>entidad</u> será el **indice** que ocupen en el <u>Index Disperse Array</u>
+Los <u>componentes</u> que ocupen el **indice i** de su <u>array sparse</u> correspondiente serán componentes asociados a la entidad con **identificador i**
+
 
 # **Pipeline de generación de contenido** 
