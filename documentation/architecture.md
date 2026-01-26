@@ -312,7 +312,7 @@ Por ejemplo para eliminar el elemento con indice 5 del anterior SparseSet quedar
 | Backlink Dense Array (BackDense) | 3 | 8 | 1 | - | - | - | - | - | - |
 ```cpp
 	void eliminar(int index){
-		//back devuelve el último elemento del array
+		//back devuelve el último elemento válido del array
 		BackDense[IdxDisperse[index]] = BackDense.back();
 		IdxDisperse[BackDense.back()] = IdxDisperse[index];
 		BackDense.pop_back();
@@ -359,7 +359,7 @@ Después simplemente haremos la operación eliminar con el indice de dicha entid
 
 #### Eliminar una Entidad
 Para eliminar una entidad primero usaremos el indice de la entidad para eliminarla en todas los SparseSet de componentes que la contengan.
-Después, la eliminaremos de la lista de entidades. 
+Después, la elsiminaremos de la lista de entidades. 
 
 ### Grupos y escenas
 Tanto los grupos como escenas serán meramente vectores con los identificadores de los objetos que contienen.
