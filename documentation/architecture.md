@@ -116,7 +116,7 @@ classDiagram
 	}
 	class LogManager{
 		+constructor(string file_name)
-		+printLog(string format, ...)
+		+print(string format, ...)$
 	}
 	class SystemManager{
 		-vector~System~ mSystemList
@@ -227,16 +227,17 @@ El uso de RAII pretende conseguir:
 
 ### LogManager
 - Todos los mensajes sacados por el motor o por el juego serán producidos por una instancia de esta clase
-- Los mensajes serán reflejados en un fichero contenido en la carpeta logs del proyecto.
-- Todos los mensajes impresos con esta clase llevarán hora, minutos y segundos. Y se imprimirán en el orden en el que se hacen las llamadas al LogManager
+- Los mensajes serán reflejados en un fichero .log contenido en la carpeta logs del proyecto.
+- Todos los mensajes impresos con esta clase llevarán hora, minutos y segundos desde que se inició el programa. Y se imprimirán en el orden en el que se hacen las llamadas al LogManager
 - Usa la sintaxis del printf de c
+- Se instancia al inicio con el motor, y se cierra con el motor
+- Acceso al metodo print estatico de esta clase para que pueda escribir quien sea
 
 ## Funcionamiento Físicas
 - Cuando hay colisión entre dos entidades se añade un componente (CollisionComponent) a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
 - A la hora de crear el juego se podrán consultar las colisiones de una entidad con getEntityCollisions(int entityId), que devolverá una lista de indices.
 - Para que dos objetos puedan tener una colision detectada entre sí, ambos deben tener el componente Collider
-
-
+  
 # **Estructura de componentes del motor y juegos**
 
 ## Arquitectura Escogida: ECS
