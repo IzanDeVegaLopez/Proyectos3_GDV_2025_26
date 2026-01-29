@@ -3,6 +3,11 @@
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
 
+## Interfaz de comunicación con el juego desde el motor
+La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
+Esta clase definirá los metodos gameInit(), gameLoop() y gameEnd().
+El motor llamará a estos métodos. Como se puede ver en el siguiente gráfico.
+
 ### ENGINE-GAME CONTROL FLOW 
 
 ```txt
@@ -64,8 +69,16 @@ Engine  0----1    2----3      <--4----5    6-------x
     like freeing engine resources.
 ```
 
+## Uso de métodos del motor desde la clase de juego
+Cada uno de los métodos anteriormente mencionados (gameInit(), gameLoop() y gameEnd()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
+```cpp
+gameContextRef->getEntitiesInGroup(X)
+```
+
 # **Estructura de las clases** 
-Documentación de Mermaid para construir los gráficos: https://mermaid.js.org/syntax/classDiagram.html
+
+Documentación de Mermaid para construir los gráficos: 
+	https://mermaid.js.org/syntax/classDiagram.html
 ---
 ## Leyenda de los diagramas:
 ### Clases, métodos y atributos
