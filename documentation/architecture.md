@@ -1,6 +1,10 @@
 ## Indice
 
 - [Estructura de la solución y proyectos (y repositorios de Git)](#estructura-de-la-solución-y-proyectos-(y-repositorios-de-git))
+	- [Librerías a usar](#librerías-a-usar)
+		- [Ogre3D](#ogre3d)
+		- [SDL2](#sdl2)
+		- [Fmod](#fmod)
 	- [Interfaz de comunicación con el juego desde el motor](#estructura-de-la-soluciòn-y-proyectos-(y-repositorios-de-git))
 		- [Flujo de control Motor-Juego](#flujo-de-control-motor-juego)
 	- [Uso de métodos del motor desde el juego](#uso-de-métodos-del-motor-desde-el-juego)
@@ -25,7 +29,7 @@
 		- [Estructura de Datos: SparseSet](#estructura-de-datos-sparseset)
 			- [Características](#características)
 			- [Objetivo](#objetivo)
-			- [Implementación](#implementación)
+			- [Implementación](#implementación-1)
 				- [Inserción en O(1)](#inserción-en-o(1))
 				- [Eliminación en O(1)](#eliminación-en-o(1))
 				- [Iteración de todos sus elementos en O(N) y en memoría contigua](#iteración-de-todos-sus-elementos-en-o(n)-y-en-memoria-contigua)
@@ -39,6 +43,7 @@
 		- [Ejemplo completo](#ejemplo-completo)
 	- [Componentes Base del Motor](#componentes-base-del-motor)
 		- [Representation2D](#representation2d)
+			- [Implementación](#implementación-2)
 		- [Representacion3D](#representation3d)
 	- [Sistemas Base del Motor](#sistemas-base-del-motor)
 		- [CollisionSystem](#collisionsystem)
@@ -52,6 +57,14 @@
 # Estructura de la solución y proyectos (y repositorios de Git) 
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
+
+## Librerías a usar
+### Ogre3D
+Usaremos ogre 3D para representar objetos 2D y 3D en el viewport. Y usaremos las AABBs que nos facilita para comprobar colisiones.
+### SDL2
+Usaremos SDL2 para manejar el input de teclado y ratón.
+### Fmod
+Usaremos Fmod para efectos de sonido y música.
 
 ## Interfaz de comunicación con el juego desde el motor
 La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
@@ -467,6 +480,9 @@ Contiene el método AddCollisionGroups(ComponentID1, ComponentID2). Ambos ID son
 
 Al comienzo de cada ciclo de juego comprobará las colisiones entre todos los grupos de componentes que se le han añadido hasta el momento. En caso de que exista una colisión se realizará el comportamiento especificado en el apartado [Colisiones](#colisiones)
 
+#### Raycast Collision
+Ogre permite usar trazado de rayos para colisioner con las AABBs de objetos en escena: https://wiki.ogre3d.org/tiki-index.php?page=Raycasting+to+the+polygon+level#Method_for_raycast
+
 ### Render2DSystem
 Itera sobre la lista de objetos con representación 2D y los plasma en pantalla.
 
@@ -476,6 +492,13 @@ Tiene 2 metodos:
 
 Si además estos objetos tienen un Transform2D usará la escala, rotación y posición para obtener donde pintar la textura en el Viewport.
 En caso de no tener un Transform2D usará rotación 0, posición (0,0) y escala (1,1).
+
+#### Implementación
+Podríamos usar SDL para pintar cosas en 2D, pero ya que vamos a usar ogre para dibujar en 3D posiblemente sea más sencillo hacerlo todo con este ultimo.
+
+Aquí hay un ejemplo de código que implementa sprites 2d en Ogre: https://wiki.ogre3d.org/tiki-index.php?page=SpriteManager2d&structure=Cookbook
+
+Para poder decidir cuales se pintan antes que los objetos 3D y cuales después que los objetos 2D asignandoles distintos render queues IDs. Se renderiza del más bajo al más alto. Fuente: https://forums.ogre3d.org/viewtopic.php?p=265546
 
 ### Render3DSystem
 Itera sobre la lista de objetos con representación 3D y los plasma en la pantalla.
