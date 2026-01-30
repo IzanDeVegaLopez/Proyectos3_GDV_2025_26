@@ -49,10 +49,6 @@ struct any_vector {
 
     any_vector() = default;
     template <typename T>
-    explicit any_vector(const std::size_t initial_capacity) {
-        reserve_exact<T>(initial_capacity);
-    }
-    template <typename T>
     explicit any_vector(const std::size_t initial_size, const T& default_value) {
         reserve_exact<T>(initial_size);
         for (std::size_t i = 0; i < initial_size; ++i) {
@@ -75,7 +71,24 @@ struct any_vector {
     any_vector(const any_vector &other) = delete;
     any_vector &operator=(const any_vector &other) = delete;
 
-    any_vector &operator=(any_vector &&other) = delete;
+    any_vector &operator=(any_vector &&other) {
+        if (!allow_silent_destruction && size > 0) {
+            assert(
+                false
+                && "error: move-assigning to any_vector with non-zero size. "
+                "any_vector needs to ensure there are no elements contained before move-assignment. "
+                "Try calling destroy<T>(), clear<T>() or truncate<T>(0) before the move-assignment is run."
+            );
+            std::exit(EXIT_FAILURE);
+        }
+        if (this != &other) {
+            std::free(values);
+            values = std::exchange(other.values, nullptr);
+            size = std::exchange(other.size, 0);
+            capacity = std::exchange(other.capacity, 0);
+        }
+        return *this;
+    }
     any_vector(any_vector &&other) noexcept
         : values(other.values), size(other.size), capacity(other.capacity) {
         other.values = nullptr;
