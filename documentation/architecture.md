@@ -51,9 +51,6 @@
 		- [Render3Dsystem](#render3dsystem)
 - [Pipeline de generación de contenido](#pipeline-de-generación-de-contenido)
 
-
-
-
 # Estructura de la solución y proyectos (y repositorios de Git) 
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
@@ -283,6 +280,13 @@ El uso de RAII pretende conseguir:
 
 ## Clases Importantes
 
+### SystemInterface
+Implementa: 
+- initSystem() 
+- updateSystem()
+- destroySystem()
+Todos los sistemas tanto del motor como de los juegos heredan de esta clase base.
+
 ### EntityManager
 - Contiene la lista (SparseSet) con todas las entidades vivas.
 - Todas las entidades que contiene serán siempre validas
@@ -321,6 +325,9 @@ No podrán tener lógica, ni requerir información de otras instancias del mismo
 Su tamaño debería ser el menor posible.
 Cada entidad solo puede tener asociado un componente de cada tipo
 - **Sistemas**: contenedores de toda la lógica del juego. No podrán hacer llamadas a otros sistemas, pero si podrán obtener información así como modificarla de los componentes de cualquier entidad existente.
+Todos los sistemas llaman a su método initSystem() al crearse, después una vez por bucle de juego llamaran a updateSystem() y por último al finalizar la ejecución del problema llamaran a destroySystem(). 
+Los sistemas tienen una flag active. El método update hará return en la primera linea sin hacer nada si esa flag no está activa, es decir si el sistema no está activo.
+Una única instancia de cada sistema es creada y gestionada por el system manager. La memoría para todos los sistemas se reserva al comienzo de la ejecución y no se liberará hasta que no se cierre el juego
 
 ## Implementación
 Usaremos extensivamente SparseSet para representar entidades, componentes y grupos de entidades.
