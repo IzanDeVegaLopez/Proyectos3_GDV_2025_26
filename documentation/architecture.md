@@ -1,4 +1,6 @@
 
+
+
 # **Estructura de la solución y proyectos (y repositorios de Git)** 
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
@@ -246,10 +248,9 @@ El uso de RAII pretende conseguir:
 - Se instancia al inicio con el motor, y se cierra con el motor
 - Acceso al metodo print estatico de esta clase para que pueda escribir quien sea
 
-## Funcionamiento Físicas
+## Colisiones
 - Cuando hay colisión entre dos entidades se añade un componente (CollisionComponent) a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
 - A la hora de crear el juego se podrán consultar las colisiones de una entidad con getEntityCollisions(int entityId), que devolverá una lista de indices.
-- Para que dos objetos puedan tener una colision detectada entre sí, ambos deben tener el componente Collider
   
 # **Estructura de componentes del motor y juegos**
 
@@ -402,5 +403,41 @@ Aunque crearemos un capa de abstracción para que conceptualmente sean algo dist
 |**Scene A SparseSet (In reality Component D)**|***|***|***|***|***|***|***|***|***|
 | Index Disperse Array | - | 2 | - | 1 | - | 0 | - | - | 3 |
 | Backlink Dense Array | 5 | 3 | 1 | 8 | - | - | - | - | - |
+
+## Componentes Base del Motor
+### Representation2D
+Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
+
+### Representation3D
+
+### Collider3D
+
+## Sistemas Base del Motor
+
+### CollisionSystem
+Detecta colisiones entre objetos de dos grupos o escenas (no necesariamente distintos).
+
+Contiene el método AddCollisionGroups(ComponentID1, ComponentID2). Ambos ID son enteros asignados en tiempo de ejecución que se corresponden con el id asignado a dichos componentes.
+
+Al comienzo de cada ciclo de juego comprobará las colisiones entre todos los grupos de componentes que se le han añadido hasta el momento. En caso de que exista una colisión se realizará el comportamiento especificado en el apartado [Colisiones](#colisiones)
+
+### Render2DSystem
+Itera sobre la lista de objetos con representación 2D y los plasma en pantalla.
+
+Tiene 2 metodos:
+- drawBackground(): que se ejecuta antes de hacer la llamada a dibujar los objetos 3D, y que por lo tanto quedará detrás de los objetos 3D.
+- drawForeground(): que se ejecuta después de hacer la llamada a dibujar los objetos 3D, y que por lo tanto dibuja por encima de estos.
+
+Si además estos objetos tienen un Transform2D usará la escala, rotación y posición para obtener donde pintar la textura en el Viewport.
+En caso de no tener un Transform2D usará rotación 0, posición (0,0) y escala (1,1).
+
+### Render3DSystem
+Itera sobre la lista de objetos con representación 3D y los plasma en la pantalla.
+
+Si además estos objetos tienen un Transform3D usará la escala, orientación y posición para obtener donde pintar el objeto 3D en el Viewport.
+En caso de no tener un Transform3D usará rotación Quaternion.Identity, posición (0,0,0) y escala (1,1,1).
+
+Dibujará los objetos teniendo en cuenta cuales son más cercanos a la cámara. Y por lo tanto ocultando aquellos que queden detras suyo con respecto a la posición de la cámara.
+
 
 # **Pipeline de generación de contenido** 
