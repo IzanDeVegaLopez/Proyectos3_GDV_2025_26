@@ -1,29 +1,9 @@
 # Proyectos3_GDV_2025_26
-```mermaid
----
-title: Animal example
----
-classDiagram
-    note "From Duck till Zebra"
-    Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Animal <|-- Fish
-    Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
-    Animal: +isMammal()
-    Animal: +mate()
-    class Duck{
-        +String beakColor
-        +swim()
-        +quack()
-    }
-    class Fish{
-        -int sizeInFeet
-        -canEat()
-    }
-    class Zebra{
-        +bool is_wild
-        +run()
-    }
-```
+Documentos Importantes:
+- [Documento de Arquitectura](#documentation/architecture.md)
+- [Documento de Planificación](#documentation/planning.md)
+- [Guía de Estilo](#documentation/style_guide.md)
+
+Documentos de Diseño de los Juegos
+- [GDD 1]()
+- [GDD 2]()
