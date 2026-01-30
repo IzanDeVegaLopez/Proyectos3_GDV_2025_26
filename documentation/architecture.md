@@ -1,7 +1,55 @@
+## Indice
+
+- [Estructura de la solución y proyectos (y repositorios de Git)](#estructura-de-la-solución-y-proyectos-(y-repositorios-de-git))
+	- [Interfaz de comunicación con el juego desde el motor](#estructura-de-la-soluciòn-y-proyectos-(y-repositorios-de-git))
+		- [Flujo de control Motor-Juego](#flujo-de-control-motor-juego)
+	- [Uso de métodos del motor desde el juego](#uso-de-métodos-del-motor-desde-el-juego)
+- [Estructura de las clases](#estructura-de-las-clases)
+	- [Leyenda de los diagramas](#leyenda-de-los-diagramas)
+		- [Sintáxis](#sintáxis)
+			- [Prefijos](#prefijos)
+			- [Sufijos](#sufijos)
+			- [Relaciones](#relaciones)
+	- [RAII](#raii)
+		- [Aplicación de RAII](#aplicación-de-raii)
+		- [Finalidad](#finalidad)
+	- [Clases Importantes](#clases-importantes)
+		- [EntityManager](#entitymanager)
+		- [ComponentManager](#componentmanager)
+		- [Componentes](#componentes)
+		- [LogManager](#logmanager)
+	- [Colisiones](#colisiones)
+- [Estructura de componentes del motor y juegos](#estructura-de-componentes-del-motor-y-juegos)
+	- [Arquitectura Escogida: ECS](#arquitectura-escogida-ecs)
+	- [Implementación](#implementación)
+		- [Estructura de Datos: SparseSet](#estructura-de-datos-sparseset)
+			- [Características](#características)
+			- [Objetivo](#objetivo)
+			- [Implementación](#implementación)
+				- [Inserción en O(1)](#inserción-en-o(1))
+				- [Eliminación en O(1)](#eliminación-en-o(1))
+				- [Iteración de todos sus elementos en O(N) y en memoría contigua](#iteración-de-todos-sus-elementos-en-o(n)-y-en-memoria-contigua)
+				- [Añadiendo datos](#añadiendo-datos)
+		- [Uso de SparseSet para Entidades y Componentes](#uso-de-sparseset-para-entidades-y-componentes)
+			- [Añadir Entidades](#añadir-entidades)
+			- [Añadir Componentes](#añadir-componentes)
+			- [Eliminar Componentes](#eliminar-componentes)
+			- [Eliminar una Entidad](#eliminar-una-entidad)
+		- [Grupos y Escenas](#grupos-y-escenas)
+		- [Ejemplo completo](#ejemplo-completo)
+	- [Componentes Base del Motor](#componentes-base-del-motor)
+		- [Representation2D](#representation2d)
+		- [Representacion3D](#representation3d)
+	- [Sistemas Base del Motor](#sistemas-base-del-motor)
+		- [CollisionSystem](#collisionsystem)
+		- [Render2DSystem](#render2dsystem)
+		- [Render3Dsystem](#render3dsystem)
+- [Pipeline de generación de contenido](#pipeline-de-generación-de-contenido)
 
 
 
-# **Estructura de la solución y proyectos (y repositorios de Git)** 
+
+# Estructura de la solución y proyectos (y repositorios de Git) 
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
 
@@ -10,7 +58,7 @@ La clase principal del juego deberá heredar de la clase abstracta **MotorProgra
 Esta clase definirá los metodos gameInit(), gameLoop() y gameEnd().
 El motor llamará a estos métodos. Como se puede ver en el siguiente gráfico.
 
-### ENGINE-GAME CONTROL FLOW 
+### Flujo de control Motor-Juego 
 
 ```txt
         |------------------------------------------> Time
@@ -71,22 +119,22 @@ Engine  0----1    2----3      <--4----5    6-------x
     like freeing engine resources.
 ```
 
-## Uso de métodos del motor desde la clase de juego
+## Uso de métodos del motor desde el juego
 Cada uno de los métodos anteriormente mencionados (gameInit(), gameLoop() y gameEnd()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
 ```cpp
 gameContextRef->getEntitiesInGroup(X)
 ```
 
-# **Estructura de las clases** 
+# Estructura de las clases 
 
 Documentación de Mermaid para construir los gráficos: 
 	https://mermaid.js.org/syntax/classDiagram.html
 ---
-## Leyenda de los diagramas:
-### Clases, métodos y atributos
+## Leyenda de los diagramas
+### Sintáxis
 "*function() \: returnType*"
 
-#### Prefijos:
+#### Prefijos
 - \+ Public
 - \- Private
 - \# Protected
@@ -95,7 +143,7 @@ Documentación de Mermaid para construir los gráficos:
 - \$ Static
 - \* Abstract (Cursiva)
 
-### Relaciones:
+#### Relaciones
 ```mermaid
 classDiagram
 classA --|> classB : Inheritance
@@ -231,12 +279,7 @@ El uso de RAII pretende conseguir:
 - La misma posición de distintas listas de componentes serán componentes pertenecientes a la misma entidad. Esta posición además coincidirá con la posición de la entidad en la lista de entidades del EntityManager
 - Las listas de componentes
 
-### SparseSet y SparseDataSet
-- Referencia https://skypjack.github.io/2020-08-02-ecs-baf-part-9/
-- Contiene un set disperso, de índices; un set denso, de datos (componentes); y un set de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el set disperso
-- El tamaño que ocupa el set de datos solo se conoceré en runtime, es decir, guardará objetos de tipo desconocido. Pero en ejecución será capaz de devolver el objeto del tipo que realmente almacena.
-
-### Components
+### Componentes
 - No heredarán de una clase base. Se recomienda que sean tan independientes como sea posible. Y que requieran el mínimo de información externa posible.
 - Recomendable mantener la estructura y el alineamiento tan pequeño como se pueda.
 
@@ -273,20 +316,20 @@ Usaremos extensivamente SparseSet para representar entidades, componentes y grup
 - Contiene un array disperso, de índices; un array denso, de datos(opcional); y un array de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el array disperso
 - El tamaño que ocupa el set de datos solo se conoceré en runtime, es decir, guardará objetos de tipo desconocido. Pero en ejecución será capaz de devolver el objeto del tipo que realmente almacena.
 
-#### Características:
-- iteración sobre todos los elementos en O(N)
+#### Características
+- iteración sobre todos los elementos en O(N) y en memoria contigua
 - acceso aleatorio en O(1)
 - inserción en O(1)
 - borrado en O(1)
 
-#### Objetivo:
+#### Objetivo
 Esta estructura a cambio de algo más de memoria nos permitirá mejorar el rendimiento.
 
 Y nos facilitará la creación de varias características de nuestro motor. Como son las entidades, componentes, grupos y escenas.
 
 Ser capaces de borrar entidades y componentes en tiempo de ejecución de forma sencilla e inmediata.
 
-#### Implementación:
+#### Implementación
 De forma que almacenaríamos nuestras entidades en una estructura de datos como la siguiente:
 |					   |   |   |   |   |   |   |   |   |   |
 |----------------------|---|---|---|---|---|---|---|---|---|
@@ -337,11 +380,14 @@ Por ejemplo para eliminar el elemento con indice 5 del anterior SparseSet quedar
 
 Al llamar a eliminar con un indice que no tiene elemento asignado la operación fallará y no hará nada. Pero no producira un error.
 
-##### Iteración de todos sus elementos en O(N)
+##### Iteración de todos sus elementos en O(N) y en memoria contigua
 Para esto simplemente habremos de recorrer el array de backlinks denso desde el primer elemento hasta el último.
 
-##### Añadiendo Datos:
-De momento solo estamos guardando indices en ambos arrays. Sin duda esto nos será útil para las entidades, grupos y escenas. Pero para los componentes queremos poder guardar su información y poder acceder a ella de forma eficiente. Para esto añadiremos un tercer array que almacenará los datos necesarios.
+##### Añadiendo Datos
+De momento solo estamos guardando indices en ambos arrays. Sin duda esto nos será útil para las entidades, grupos y escenas. Pero para los componentes queremos poder guardar su información y poder acceder a ella de forma eficiente. Para esto añadiremos un tercer array que almacenará los datos necesarios. Este tercer array será implementado con type-erased(
+https://docs.rs/any_vec/latest/any_vec/).
+
+Es decir, no conoceremos en tiempo de compilación el tipo de los elementos guardados en él ni el tamaño. Pero en tiempo de ejecución será capaz de devolver los elementos del tipo concreto, e iterar y tener acceso constante teniendo en cuenta cuanto ocupan en memoria.
 
 Este tercer vector será también denso e imitará el comportamiento del vector denso de Backlinks.
 Es decir el elemento i de la lista de backlinks corresponde con la información guardada en el indice i del array de información.
@@ -352,7 +398,7 @@ Es decir el elemento i de la lista de backlinks corresponde con la información 
 | Backlink Dense Array | 3 | 5 | 1 | - | - | - | - | - | - |
 | Data Dense Array 	   | Info_3 | Info_5 | Info_1 | - | - | - | - | - | - |
 
-### Uso de SparseSet para Entidades y Componentes:
+### Uso de SparseSet para Entidades y Componentes
 Para hacer que buscar entidades con un mismo componente así como poder recorrer todas las entidades usaremos un SparseSet base para todas las entidades y uno por componente.
 
 El **identificador** de cada <u>entidad</u> será el **indice** que ocupen en el <u>Index Disperse Array</u>
@@ -408,9 +454,9 @@ Aunque crearemos un capa de abstracción para que conceptualmente sean algo dist
 ### Representation2D
 Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
 
-### Representation3D
+Tiene un flag de un bit que indica si se dibuja en el viewport antes o después de los objetos 3D.
 
-### Collider3D
+### Representation3D
 
 ## Sistemas Base del Motor
 
