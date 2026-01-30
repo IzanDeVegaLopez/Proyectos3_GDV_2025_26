@@ -88,7 +88,7 @@ Engine  0----1    2----3      <--4----5    6-------x
 1: Game Main
     CONTROL: Engine to Game
     Gameplay Initialization.
-	Función Asociada: gameInit()
+	Función Asociada: initGame()
 
 2: Engine Loop Start
     CONTROL: Game to Engine
@@ -101,7 +101,7 @@ Engine  0----1    2----3      <--4----5    6-------x
     Our game Gameplay Loop
     Includes doing things in/with
     SYSTEMS.
-	Función Asociada: gameLoop()
+	Función Asociada: updateGame()
 
 4: Game Loop End
     CONTROL: Game to Engine
@@ -120,7 +120,7 @@ Engine  0----1    2----3      <--4----5    6-------x
     The game is exiting.
     Do any game-specific shutdown stuff,
     like saving game data.
-	Función Asociada: gameEnd()
+	Función Asociada: exitGame()
 
 6: Engine Shutdown
     CONTROL: Game to Engine
@@ -130,10 +130,26 @@ Engine  0----1    2----3      <--4----5    6-------x
 ```
 
 ## Uso de métodos del motor desde el juego
-Cada uno de los métodos anteriormente mencionados (gameInit(), gameLoop() y gameEnd()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
+Cada uno de los métodos anteriormente mencionados (initGame(), updateGame() y exitGame()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
 ```cpp
 gameContextRef->getEntitiesInGroup(X)
 ```
+
+## Input
+La lectura del input se hará mediante SDL. Una clase wraper registrará los inputs y permitirá acceder a los siguientes métodos:
+- getKeyState(SDL_Keycode) => returns true si la tecla está pulsada
+- getKeyDown(SDL_Keycode) => return true si la tecla ha sido pulsada este frame
+- getKeyUp(SDL_Keycode) => return true si la tecla se ha dejado de pulsar este frame
+
+Como todo SDL_Keycode normal y relevante al hacer juegos se puede almacenar en 8 bytes podemos usar los siguientes valores:
+Por lo tanto esta clase ocupará 2^8 bytes * 3.
+Pues necesitaremos 3 flags una por cosa a devolver.
+Entonces tendremos 3 vectores de 256 bits. Cada bits será una flag.
+
+Implementar esto con SDL será sencillo.
+Obtendremos el keycode de la tecla que haya leido. Este codigo será el indice del array para esa tecla.
+Después simplemente si el evento es que esa tecla se ha pulsado este frame se activa la flag del vector keydown y el flag de keystate, si hemos dejado de pulsar se activa la flag del vector keyup correspondiente y se pone a 0 la flag de keystate.
+Lo único que nos queda sería resetear todas las flags de los vectores keydown y keyup cada frame. Notese que el vector de keystate conserva el estado del anterior frame.
 
 # Estructura de las clases 
 
