@@ -533,3 +533,28 @@ Dibujará los objetos teniendo en cuenta cuales son más cercanos a la cámara. 
 
 
 # **Pipeline de generación de contenido** 
+En pipeline de generación de contenido el motor transforma los archivos externos del juego (mapas, prefabs, scripts y recursos) en entidades y componentes funcionales dentro de la escena.
+
+El proceso será similar al siguiente:
+
+flowchart TD
+    A[Archivo de datos] --> B[Lectura]
+    B -->|Error| X[Log por consola]
+    B -->|OK| C[EntityManager]
+    C --> D[ComponentManager]
+    D --> E[Scene]
+
+A. Creación de archivos de datos
+Se crean los archivos de datos base (.txt, .material, .lua, .png, .wav, .mp3, etc.) que contienen la información necesaria para definir el contenido del juego.
+
+B. Lectura e interpretación de la escena
+Al iniciarse el motor, se carga el archivo de escena correspondiente (por ejemplo, un archivo Scene1.txt), el cual describe todas las entidades presentes en la escena, como el mapa del terreno, el jugador, los NPCs y el resto de elementos del juego.
+Estos datos son interpretados por un sistema de carga, que valida la información y genera mensajes de log en caso de error (archivo inexistente, recurso no encontrado o formato incorrecto).
+
+En caso de no producirse errores críticos, el sistema de carga crea entidades vacías en el EntityManager y les asigna componentes en función de los datos descritos en el fichero.
+
+C. Creación y almacenamiento de componentes
+Cada componente es creado y almacenado en el ComponentManager utilizando estructuras de tipo SparseSet, quedando asociado a su entidad mediante su identificador único.
+
+D. Incorporación a la escena y ejecución
+Una vez completada la carga, las entidades pasan a formar parte de la escena activa y pueden ser procesadas por los distintos sistemas del motor durante el bucle principal.
