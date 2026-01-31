@@ -537,12 +537,11 @@ En pipeline de generación de contenido el motor transforma los archivos externo
 
 El proceso será similar al siguiente:
 
-flowchart TD
-    A[Archivo de datos] --> B[Lectura]
-    B -->|Error| X[Log por consola]
-    B -->|OK| C[EntityManager]
-    C --> D[ComponentManager]
-    D --> E[Scene]
+A[Archivo de datos] --> B[Lectura]
+B -->|Error| X[Log por consola]
+B -->|OK| C[EntityManager]
+C --> D[ComponentManager]
+D --> E[Scene]
 
 A. Creación de archivos de datos
 Se crean los archivos de datos base (.txt, .material, .lua, .png, .wav, .mp3, etc.) que contienen la información necesaria para definir el contenido del juego.
