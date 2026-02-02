@@ -137,7 +137,7 @@ El tag tendrá el siguiente nombre:
 X.Y.Z
 - X será el hito en el que se hace
 - Y será la semana de dicho hito (con índice 0)
-- Z será la versión que de dicho ejecutable (con indice 0). Este último número solo está por si se consiguen implementar alguna cosa que inicialmente no se preveyese en el primer ejecutable de esa semana.
+- Z será la versión de dicho ejecutable (con indice 0). Este último número solo está por si se consigue implementar alguna cosa que inicialmente no se previese en el primer ejecutable de esa semana.
 
 # Comunicación
 Usaremos discord para hablar entre nosotros.
