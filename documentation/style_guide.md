@@ -13,7 +13,7 @@ Los únicos documentos de todo el proyecto en español serán la documentación 
 ### Nombramiento
 Todos los nombres han de ser claros de su función o contenido. Además todos los métodos públicos de una clase deberán tener una descripción de uso (comentario). 
 
-**Importante** ningún nombre de variable, enum, clase, etc, etc. Podrá tener como primera palabra adverbios, determinantes, pronombres, adverbios, preposiciones o conjunciones.
+**Importante** ningún nombre de variable, enum, clase, etc, etc. Podrá tener como primera palabra adverbios, determinantes, pronombres, preposiciones o conjunciones.
 Los únicos tipos de palabras que pueden encabezar un nombre son:
 - Sustantivos o adjetivos (variables, atributos, clases y enumerados). El conjunto del nombre tendrá que ser un sintagma nominal.
 - Verbos (funciones y métodos). El conjunto del nombre tendrá que ser un sintagma verbal.
