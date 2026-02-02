@@ -138,3 +138,41 @@ X.Y.Z
 - X será el hito en el que se hace
 - Y será la semana de dicho hito (con índice 0)
 - Z será la versión que de dicho ejecutable (con indice 0). Este último número solo está por si se consiguen implementar alguna cosa que inicialmente no se preveyese en el primer ejecutable de esa semana.
+
+# Comunicación
+Usaremos discord para hablar entre nosotros.
+
+Dividiremos las conversaciones por distintos canales e hilos segun creamos conveniente.
+
+# Presentaciones
+Usaremos canva para crear las presentaciones de los hitos
+Hemos añadido un bot (https://readybot.io) al server para que mande un mensaje con los titulos de los commits que hagamos en main
+
+# Sistema de control de versiones
+Usaremos github aprovechando que nos da la pizarra de tareas integrada, y el uso de Github Desktop para simplificar los tramites.
+
+## Remoto y Local
+De forma normal solo se podrá pushear al repositorio remoto cuando la tarea completa se consideré terminada por quien la hizo.
+Cuando quiera pushear primero deberá:
+- Hacer fetch y pull del remoto
+- Comprobar que se puede compilar
+- Comprobar que se puede ejecutar
+- Comprobar que todo funciona sin errores apreciables y como era la intención
+Después de todo esto podrá pushear a main.
+
+## Ramas
+En nuestro proyecto no crearemos ramas en remoto a la hora de desarrollar a menos que sea necesario.
+
+Casos en los que se considera valido pushear un rama a remoto:
+- Para continuar adelantando trabajo para el siguiente sprint después de generar el ejecutable. Así conseguiremos que la última versión en main sea el ejecutable de esa semana.
+- Para debuggear problemas en el desarrollo de una tarea realizada por un compañero. La rama se destruirá en cuanto se arregle el problema y pueda ser pusheado a main.
+
+# Compilación y Ejecución del proyecto
+Usaremos Cmake. Esto nos permitirá desarrollar en distintos IDEs, conseguir la estructura de carpetas que buscamos y ejecutar el proyecto cargando las librerias o ficheros necesarios (entre los que se encuentran los juegos). Todo esto de forma lightweigth.
+
+# Documentación del código
+Todas las funciones, clases, métodos y atributos públicos no triviales deberán estar acompañadas de un comentario que explique su finalidad, parámetros y forma de uso. De forma que cualquier persona pueda usarlas facilmente con tan solo ver el comentario.
+
+Los nombres de los parametros, métodos y clases deberán ser autoexplicativos para facilitar la comprensión.
+
+Para más detalles sobre la sintaxis ver el documento [style_guide.md](style-guide.md)
