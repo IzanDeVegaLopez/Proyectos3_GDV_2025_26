@@ -5,7 +5,7 @@
 		- [Ogre3D](#ogre3d)
 		- [SDL2](#sdl2)
 		- [Fmod](#fmod)
-	- [Interfaz de comunicación con el juego desde el motor](#estructura-de-la-soluciòn-y-proyectos-(y-repositorios-de-git))
+	- [Interfaz de comunicación con el juego desde el motor](#interfaz-de-comunicación-con-el-juego-desde-el-motor)
 		- [Flujo de control Motor-Juego](#flujo-de-control-motor-juego)
 	- [Uso de métodos del motor desde el juego](#uso-de-métodos-del-motor-desde-el-juego)
 - [Estructura de las clases](#estructura-de-las-clases)
@@ -62,10 +62,30 @@ Usaremos ogre 3D para representar objetos 2D y 3D en el viewport. Y usaremos las
 Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
+### Lua + Sol3
+Usamos Lua porque en la industria real nadie quiere recompilar C++ (que tarda mucho) para cambiar la velocidad de un enemigo. Lua sirve para hacer cambios rápidos y definir lógica sin tocar el "núcleo" del motor.
+
+Por tanto, usamos Lua para crear la escena. En lugar de un .txt, usamos un script de Lua que llama a funciones de C++ para crear los objetos. Esto nos ofrece ventajas como:
+- **Iteración rápida:** Modificar la disposición del nivel sin recompilar C++.
+- **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
+- **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
+```lua
+	-- scene_loader.lua
+	print("Cargando nivel bosque...")
+
+	local player = crearEntidad("Jugador")
+	player:setPos(0, 0)
+
+	-- Podemos usar bucles! Esto es la ventaja sobre un txt
+	for i = 1, 10 do
+	    local arbol = crearEntidad("Arbol")
+	    arbol:setPos(i * 5, 0)
+	end
+```
 
 ## Interfaz de comunicación con el juego desde el motor
 La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
-Esta clase definirá los metodos gameInit(), gameLoop() y gameEnd().
+Esta clase definirá los metodos initGame(), updateGame() y exitGame().
 El motor llamará a estos métodos. Como se puede ver en el siguiente gráfico.
 
 ### Flujo de control Motor-Juego 
@@ -136,20 +156,38 @@ gameContextRef->getEntitiesWithComponent(X)
 ```
 
 ## Input
-La lectura del input se hará mediante SDL. Una clase wraper registrará los inputs y permitirá acceder a los siguientes métodos:
-- getKeyState(SDL_Keycode) => returns true si la tecla está pulsada
-- getKeyDown(SDL_Keycode) => return true si la tecla ha sido pulsada este frame
-- getKeyUp(SDL_Keycode) => return true si la tecla se ha dejado de pulsar este frame
+La gestión de entrada se realizará mediante un wrapper sobre **SDL2**. El sistema almacenará el estado de los dispositivos (teclado y ratón) del frame actual y del frame anterior para poder detectar transiciones (pulsaciones nuevas "down", liberaciones "up" y movimiento en caso del ratón).
 
-Como todo SDL_Keycode normal y relevante al hacer juegos se puede almacenar en 8 bytes podemos usar los siguientes valores:
-Por lo tanto esta clase ocupará 2^8 bytes * 3.
-Pues necesitaremos 3 flags una por cosa a devolver.
-Entonces tendremos 3 vectores de 256 bits. Cada bits será una flag.
+### Implementación interna
+El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior y se sondeará a SDL para actualizar el estado actual.
 
-Implementar esto con SDL será sencillo.
-Obtendremos el keycode de la tecla que haya leido. Este codigo será el indice del array para esa tecla.
-Después simplemente si el evento es que esa tecla se ha pulsado este frame se activa la flag del vector keydown y el flag de keystate, si hemos dejado de pulsar se activa la flag del vector keyup correspondiente y se pone a 0 la flag de keystate.
-Lo único que nos queda sería resetear todas las flags de los vectores keydown y keyup cada frame. Notese que el vector de keystate conserva el estado del anterior frame.
+#### Teclado
+SDL proporciona el estado de todo el teclado mediante `SDL_GetKeyboardState`. Usaremos `SDL_Scancode` (posición física) para indexar un array de tamaño fijo `SDL_NUM_SCANCODES` (512).
+
+**Justificación: Scancode vs Keycode**
+Se elige `SDL_Scancode` frente a `SDL_Keycode` por dos motivos principales:
+1.  **Independencia del Layout (Layout Agnostic):** El Scancode referencia la ubicación física de la tecla en el hardware, independientemente del idioma configurado en el sistema operativo. Esto garantiza que los controles estándar de movimiento (como **WASD**) mantengan la misma posición ergonómica para el jugador, incluso si utiliza un teclado con distribución AZERTY o Dvorak.
+2.  **Acceso Directo a Memoria:** La función `SDL_GetKeyboardState` devuelve un puntero a un array interno de SDL indexado nativamente por Scancodes. Usar Keycodes (que representan el carácter 'A', 'B', etc.) requeriría realizar una conversión o "mapeo" adicional en cada consulta, añadiendo una sobrecarga innecesaria.
+
+#### Ratón
+Para el ratón gestionaremos dos tipos de datos:
+1.  **Botones:** Un array de 5 booleanos/enteros (Izquierdo, Central, Derecho, X1, X2).
+2.  **Posición:** Un par de coordenadas (X, Y) para saber dónde está el cursor y cuánto se ha movido (Delta).
+
+### Estructura de Datos
+La clase `InputManager` contendrá:
+```cpp
+// Teclado
+std::array<Uint8, SDL_NUM_SCANCODES> kbState;      // Estado actual
+std::array<Uint8, SDL_NUM_SCANCODES> kbLastBState;  // Estado frame anterior
+
+// Ratón
+std::array<Uint8, 5> mouseButtons;         // Estado actual botones
+std::array<Uint8, 5> mouseLastButtons;     // Estado frame anterior botones
+Vector2 mousePos;                          // Posición actual (X,Y)
+Vector2 mouseLastPos;                      // Posición frame anterior (X,Y)
+```
+Aclaraciones: El Uint8 devuelto es 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
 
 # Estructura de las clases 
 
