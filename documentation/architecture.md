@@ -132,7 +132,7 @@ Engine  0----1    2----3      <--4----5    6-------x
 ## Uso de métodos del motor desde el juego
 Cada uno de los métodos anteriormente mencionados (initGame(), updateGame() y exitGame()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
 ```cpp
-gameContextRef->getEntitiesInGroup(X)
+gameContextRef->getEntitiesWithComponent(X)
 ```
 
 ## Input
@@ -193,11 +193,14 @@ classDiagram
 	GameManager *-- SystemManager
 	SystemManager --> "0..*" System
 	EntityManager --> "0..*" Entity
-	ComponentManager *-- Transform3DComponent  
-	ComponentManager *-- Transform2DComponent
-	ComponentManager *-- CollisionComponent
-	ComponentManager *-- ColliderComponent
-	System <|-- CollisionSystem
+	ComponentManager *-- "0..*" ComponentA
+	ComponentManager *-- "0..*" ComponentB
+	ComponentManager *-- "0..*" ComponentN
+	SystemManager --> "0..*" SystemA
+	SystemManager --> "0..*" SystemB
+	System <|-- "0..*" SystemA
+	System <|-- "0..*" SystemB
+	
 	SparseSet <|-- SparseDataSet
 	class Entity{
 		-alive
@@ -256,23 +259,6 @@ classDiagram
 		-insertElement(int index)
 		-eraseElement(int index)
     }
-	class Transform3DComponent{
-		+vector3~float~ position
-		+vector3~float~ scale
-		+Quaternion~float~ orientation
-	}
-	class Transform2DComponent{
-		+vector2~float~ pos
-		+vector2~float~ scale
-		+float rotation
-	}
-	class CollisionComponent{
-		int entitiesCollidedWith[10]
-		uint8_t collisionNumber
-	}
-	class ColliderComponent{
-
-	}
 ```
 
 ## RAII
@@ -311,10 +297,6 @@ Todos los sistemas tanto del motor como de los juegos heredan de esta clase base
 - Contiene una lista por tipo de componente posible
 - La misma posición de distintas listas de componentes serán componentes pertenecientes a la misma entidad. Esta posición además coincidirá con la posición de la entidad en la lista de entidades del EntityManager
 - Las listas de componentes
-
-### Componentes
-- No heredarán de una clase base. Se recomienda que sean tan independientes como sea posible. Y que requieran el mínimo de información externa posible.
-- Recomendable mantener la estructura y el alineamiento tan pequeño como se pueda.
 
 ### LogManager
 - Todos los mensajes sacados por el motor o por el juego serán producidos por una instancia de esta clase
@@ -463,7 +445,7 @@ Tanto los grupos como escenas serán meramente vectores con los identificadores 
 
 Podemos volver a usar la estructura SparseSet y modelarlos igual que componentes sin información (sin array adicional de datos o cuya suma del espacio en memoria de sus elementos es 0).
 
-Aunque crearemos un capa de abstracción para que conceptualmente sean algo distinto.
+No crearemos un capa de abstracción para no separarlos de los compontes pues son lo mismo y deberían ser tratados como tal.
 
 ### Ejemplo completo
 |					   |   |   |   |   |   |   |   |   |   |
@@ -538,10 +520,14 @@ En pipeline de generación de contenido el motor transforma los archivos externo
 El proceso será similar al siguiente:
 
 A[Archivo de datos] --> B[Lectura]
-B -->|Error| X[Log por consola]
-B -->|OK| C[EntityManager]
-C --> D[ComponentManager]
-D --> E[Scene]
+
+B -->|Error| X [Log por consola]
+
+B -->|OK| C [EntityManager]
+
+C --> D [ComponentManager]
+
+D --> E [Scene]
 
 A. Creación de archivos de datos
 Se crean los archivos de datos base (.txt, .material, .lua, .png, .wav, .mp3, etc.) que contienen la información necesaria para definir el contenido del juego.
