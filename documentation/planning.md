@@ -47,42 +47,56 @@
 - Objetivos:
     - Preparar diapositivas con las que demostrar la organización y el progreso actual del proyecto.
     - Asegurarse de que todo el grupo tiene claros los contenidos de la presentación de cara a la exposición oral.
+    - Dividir la presentación y los contenidos en tres bloques diferenciados
 
 ## Hito 1:   
 - Fecha límite: Viernes 6 de marzo.
 - Objetivos:
-    - Librerías compiladas y compilación automática   
-    - Primeros componentes sencillos (¡incluso vacíos\!).   
-    - Carga de mapas con esos componentes.   
-    - “Juegos” en los repositorios con “componentes” (aunque sean vacíos) cargados desde mapas.   
+    - Librerías compiladas y compilación automática
+    - Primeros componentes sencillos (¡incluso vacíos\!).
+    - Cargar mapas básicos (json) con esos componentes.
+    - “Juegos” en los repositorios con “componentes” (aunque sean vacíos) cargados desde mapas.
     - Puesta en marcha y bucle principal.  
-    - Escenas.
+    - Escenas (idealmente con alguna malla que vayamos a utilizar renderizada)
 
 ## Hito 2:   
 
 - Fecha límite: Martes 14 de abril.
 - Objetivos:
     - Componentes y resto del motor.
-    - Avances (seguramente pequeños) en los juegos.
+    - Prototipo de carga de mapas a través de LUA.
+    - Avances (medianos/grandes) en los juegos.
 
 ## Hito 3:   
 
 - Fecha límite: Viernes 8 de mayo.
 - Objetivos:
     - Juegos y pruebas.
-    - 
+
+# Metas por semanas
+## Semana 6-2
+## Semana 13-2
+## Semana 20-2
+## Semana 27-2
+## Semana 6-3
+## Semana 13-3
+## Semana 20-3
+## Semana 27-3
+
+
 
 # Planificación de un hito
 La planificación de un hito se hará en el plazo de los tres primeros días de ese hito (Viernes-Sabado-Domingo habitualmente)
 Durante esos 3 primeros días se organizará lo siguiente
-- Backlog de tareas a realizar en ese hito
-- Posibles divisiones del grupo en función de la tareas
+- Backlog de tareas a realizar en ese hito en la pizarra de tareas de GitHub
+- Posibles divisiones del grupo en función de las tareas
+- Planificación del primer sprint
 
 Cada hito estará dividido en sprints de una semana de duración.
 
 # Planificación de un sprint
-El primer día del sprint deberán quedar fijadas todas las tareas a llevar a cabo durante esa semana. 
-El primer día del sprint (Viernes) cada persona deberá tener asignada una tarea por la que comenzar.
+El primer día del sprint deberán quedar fijadas todas las tareas a llevar a cabo durante esa semana.
+El primer día del sprint cada persona deberá tener asignada una tarea por la que comenzar.
 
 ## Objetivo
 - Tener un ejecutable estable al final de la semana. El commit a partir del que se pueda generar este ejecutable estará marcado con un tag.
@@ -95,6 +109,8 @@ El primer día del sprint (Viernes) cada persona deberá tener asignada una tare
 - Día 6-7: Revisión - Bugfixing - Generar ejecutable en debug y en release y comprobar que funciona
 
 Si durante el día 6-7 sobra tiempo se hará la planificación del siguiente sprint. Y si sigue sobrando se podrán comenzar las tareas del siguiente sprint, pero deberá hacerse en un rama para tener un ejecutable estable por semana.
+
+En este caso, los sprints empezarán los viernes.
 
 Para organizar el sprint se usará la pizarra de tareas del github desktop
 ## Pizarra de tareas
