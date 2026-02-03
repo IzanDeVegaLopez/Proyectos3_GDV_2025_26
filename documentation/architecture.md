@@ -507,8 +507,12 @@ No crearemos un capa de abstracción para no separarlos de los compontes pues so
 | Backlink Dense Array | 5 | 3 | 1 | 8 | - | - | - | - | - |
 
 ## Componentes Base del Motor
-### Transform
-Almacena la posición, escala y rotación de la entidad.
+
+### Transform2D
+Almacena la posición y escala de la entidad como un `Vector2<float>`, y la rotación como un `float` representando el ángulo en radianes a partir del `Vector2(1,0)`, en sentido antihorario.
+
+### Transform3D
+Almacena la posición y escala de la entidad como un `Vector3<float>`, y la rotación como un `Quaternion`.
 
 ### Graphics2D
 Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
@@ -516,7 +520,7 @@ Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecuc
 Tiene un flag de un bit que indica si se dibuja en el viewport antes o después de los objetos 3D.
 
 ### Graphics3D
-Almacena un meshId. El componente actúa como interfaz para realizar la representación de un mesh mediante OGRE.
+Almacena un meshId como `string`. El componente actúa como interfaz para realizar la representación de un mesh mediante OGRE, cuyo nodo será almacenado en un `SparseSet` aparte.
 
 ### BoxCollider
 Proporciona un ortoedro sobre el cual podrán darse colisiones con otros elementos que también posean un `BoxCollider`. Este será equivalente a una BoundingBox de OGRE. Una colisión entre dos elementos dados será registrada al principio del bucle del juego, y almacenada en sus partícipes durante esa misma iteración mediante un componente `CollisionData`.
