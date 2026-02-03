@@ -1,4 +1,4 @@
-# Nombre Juego 1
+# Angry Balls
 ***Subtítulo Página Web*** 🌐 **[Página web del juego](https://www.youtube.com/watch?v=dQw4w9WgXcQ)**  
 
 
@@ -14,6 +14,8 @@
 - Izan de Vega López   
 - David Palacios Daza
 - Amiel Ramos Juez  
+- Álvaro Piña Sánchez-Sierra
+- Hugo de Brito Rocha
 
 ## ÍNDICE  
 1. [Resumen](#1-resumen)  
