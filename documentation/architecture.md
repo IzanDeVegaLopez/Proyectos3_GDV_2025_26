@@ -507,12 +507,21 @@ No crearemos un capa de abstracción para no separarlos de los compontes pues so
 | Backlink Dense Array | 5 | 3 | 1 | 8 | - | - | - | - | - |
 
 ## Componentes Base del Motor
-### Representation2D
+### Transform
+Almacena la posición, escala y rotación de la entidad.
+
+### Graphics2D
 Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
 
 Tiene un flag de un bit que indica si se dibuja en el viewport antes o después de los objetos 3D.
 
-### Representation3D
+### Graphics3D
+
+### BoxCollider
+Proporciona un ortoedro sobre el cual podrán darse colisiones con otros elementos que también posean un `BoxCollider`. Una colisión entre dos elementos dados será registrada al principio del bucle del juego, y almacenada en sus partícipes durante esa misma iteración mediante un componente `CollisionData`.
+
+### CollisionData
+Almacena la información de una colisión que haya ocurrido en la misma iteración del bucle del juego. Este componente será añadido automáticamente por el motor a medida que sucedan los contactos entre colliders, y no deberá ser añadido manualmente. Una vez acaba la iteración del bucle, este componente es eliminado.
 
 ## Sistemas Base del Motor
 
