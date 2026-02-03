@@ -52,6 +52,33 @@
 - [Pipeline de generación de contenido](#pipeline-de-generación-de-contenido)
 
 # Estructura de la solución y proyectos (y repositorios de Git) 
+## Estructura de la solución en local:
+- src
+	- Engine
+ 		- Engine Project
+   		- Engine files 0...N
+   	- Game1
+   		- Game1 Project
+   	 	- Game1 files 0...N
+   	- Game2
+   		- Game2 Project
+   	 	- Game2 files 0...N
+- assets
+- tmp
+	- lib
+ 		- librerias necesarias para compilar la engine
+	- bin
+   		- ejecutables motor ... (Debug & Release)
+     	- dll juego ... (Debug & Release)
+      	- assets (cmake hace una copia de los que estan subidos al repo)
+  
+## Estructura de la solución por repositorios:
+- src
+	- project
+ 	- files 0..N
+- assets
+- Cmake.txt
+
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
 
@@ -63,9 +90,9 @@ Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
 ### Lua + Sol3
-Usamos Lua porque en la industria real nadie quiere recompilar C++ (que tarda mucho) para cambiar la velocidad de un enemigo. Lua sirve para hacer cambios rápidos y definir lógica sin tocar el "núcleo" del motor.
+Usaremos Lua para evitar recompilar C++ al cambiar parametros del juego o de las escemas.
 
-Por tanto, usamos Lua para crear la escena. En lugar de un .txt, usamos un script de Lua que llama a funciones de C++ para crear los objetos. Esto nos ofrece ventajas como:
+Por tanto, usaremos Lua para crear la escena y describir los objetos y componentes en su interior, usamos un script de Lua que llama a funciones de C++ para crear los objetos. Esto nos ofrece ventajas como:
 - **Iteración rápida:** Modificar la disposición del nivel sin recompilar C++.
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
 - **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
