@@ -229,7 +229,7 @@ classDiagram
 	GameManager *-- EntityManager
 	GameManager *-- ComponentManager
 	GameManager *-- SystemManager
-	SystemManager --> "0..*" System
+	SystemManager --|> "0..*" System
 	EntityManager --> "0..*" Entity
 	ComponentManager *-- "0..*" ComponentA
 	ComponentManager *-- "0..*" ComponentB
