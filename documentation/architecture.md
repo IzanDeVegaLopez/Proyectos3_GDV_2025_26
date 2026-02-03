@@ -167,6 +167,18 @@ Cada uno de los métodos anteriormente mencionados (initGame(), updateGame() y e
 gameContextRef->getEntitiesWithComponent(X)
 ```
 
+## Creación de componentes desde el juego
+Para crear un componente para el juego se tienen que dar los siguientes pasos:
+- **1.** Crear un .hpp que contenga la definición de un struct, con los atributos del componente. Este fichero contiene un atributo que es el string que buscaremos en pasos posteriores para identificar este componente.
+- **2.** En el archivo de la escena de LUA leemos cada entidad y comprobamos los atributos que contienen. Dichos atributos deberían coincidir con el string de los distintos componentes existentes. En caso de encontrar alguno en el que esto no sea así lanzaremos una excepción. Cada vez que se lea un componente completo sin errores se añadirá a la lista de componentes en ejecución del juego en cpp.
+
+## Creación de sistemas desde el juego
+En ningún momento el juego podrá crear sistemas. Ni tener acceso directo a los sistemas del motor.
+
+Se dota al juego de la función updateGame(). Es responsabilidad de quien programe los juegos en el motor decidir como va a programar el juego, teniendo en cuenta que los componentes no pueden tener lógica.
+
+Se recomienda que al hacer el juego el usuario defina sus propios sistemas independientes a los del juego y que así decida el orden y cuando los llama. Pero se deja la libertad desde el motor de usar cualquier otro paradigma de programación compatible.
+
 ## Input
 La gestión de entrada se realizará mediante un wrapper sobre **SDL2**. El sistema almacenará el estado de los dispositivos (teclado y ratón) del frame actual y del frame anterior para poder detectar transiciones (pulsaciones nuevas "down", liberaciones "up" y movimiento en caso del ratón).
 
@@ -375,7 +387,8 @@ Cada entidad solo puede tener asociado un componente de cada tipo
 - **Sistemas**: contenedores de toda la lógica del juego. No podrán hacer llamadas a otros sistemas, pero si podrán obtener información así como modificarla de los componentes de cualquier entidad existente.
 Todos los sistemas llaman a su método initSystem() al crearse, después una vez por bucle de juego llamaran a updateSystem() y por último al finalizar la ejecución del problema llamaran a destroySystem(). 
 Los sistemas tienen una flag active. El método update hará return en la primera linea sin hacer nada si esa flag no está activa, es decir si el sistema no está activo.
-Una única instancia de cada sistema es creada y gestionada por el system manager. La memoría para todos los sistemas se reserva al comienzo de la ejecución y no se liberará hasta que no se cierre el juego
+Una única instancia de cada sistema es creada y gestionada por el system manager. La memoría para todos los sistemas se reserva al comienzo de la ejecución y no se liberará hasta que no se cierre el juego.
+El juego no podrá interactuar con los sistemas del motor de manera directa ni crear los suyos propios.
 
 ## Implementación
 Usaremos extensivamente SparseSet para representar entidades, componentes y grupos de entidades.
@@ -386,8 +399,18 @@ Se puede ver una explicación detallada de SparseSet [aquí](anexos/SparseSet.md
 ### Transform2D
 Almacena la posición y escala de la entidad como un `Vector2<float>`, y la rotación como un `float` representando el ángulo en radianes a partir del `Vector2(1,0)`, en sentido antihorario.
 
-### Transform3D
-Almacena la posición y escala de la entidad como un `Vector3<float>`, y la rotación como un `Quaternion`.
+### Orientation
+Quaternion que almacena la orientación de un objeto.
+
+### Scale
+Vector 3 que almacena la escala en los ejes "xyz" del objeto
+
+### tasy_node
+Almacena en un vector3 de floats (4 bytes) la posición del objeto y en un un entero de 4 bytes el índice del nodo de ogre que tiene asignado.
+Por lo tanto al añadir el componente tasy_node a un elemento de la escena se genera también un nodo de ogre vinculado a él. Y al quitarselo se elimina consigo el nodo de ogre.
+
+### tasy_nodeName
+Almacena en como mucho 8 caracteres el nombre de la malla asignada.
 
 ### Graphics2D
 Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
@@ -412,8 +435,14 @@ Contiene el método AddCollisionGroups(ComponentID1, ComponentID2). Ambos ID son
 
 Al comienzo de cada ciclo de juego comprobará las colisiones entre todos los grupos de componentes que se le han añadido hasta el momento. En caso de que exista una colisión se realizará el comportamiento especificado en el apartado [Colisiones](#colisiones)
 
+Es el responsable de que dos objetos no puedan encontrarse uno dentro del otro.
+
 #### Raycast Collision
 Ogre permite usar trazado de rayos para colisioner con las AABBs de objetos en escena: https://wiki.ogre3d.org/tiki-index.php?page=Raycasting+to+the+polygon+level#Method_for_raycast
+
+### Input System
+Ver el apartado [Input](#input).
+Guarda el input y permite al juego obtener información de que teclas han sido pulsadas este frame, cuales estan pulsadas y cuales se han dejado de pulsar este frame.
 
 ### Render2DSystem
 Itera sobre la lista de objetos con representación 2D y los plasma en pantalla.
@@ -433,12 +462,7 @@ Aquí hay un ejemplo de código que implementa sprites 2d en Ogre: https://wiki.
 Para poder decidir cuales se pintan antes que los objetos 3D y cuales después que los objetos 2D asignandoles distintos render queues IDs. Se renderiza del más bajo al más alto. Fuente: https://forums.ogre3d.org/viewtopic.php?p=265546
 
 ### Render3DSystem
-Itera sobre la lista de objetos con representación 3D y los plasma en la pantalla.
-
-Si además estos objetos tienen un Transform3D usará la escala, orientación y posición para obtener donde pintar el objeto 3D en el Viewport.
-En caso de no tener un Transform3D usará rotación Quaternion.Identity, posición (0,0,0) y escala (1,1,1).
-
-Dibujará los objetos teniendo en cuenta cuales son más cercanos a la cámara. Y por lo tanto ocultando aquellos que queden detras suyo con respecto a la posición de la cámara.
+Hace la llamada a Ogre para que renderice los objetos 3D en la escena actual
 
 
 # **Pipeline de generación de contenido** 
