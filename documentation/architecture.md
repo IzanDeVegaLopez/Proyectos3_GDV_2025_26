@@ -516,9 +516,10 @@ Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecuc
 Tiene un flag de un bit que indica si se dibuja en el viewport antes o después de los objetos 3D.
 
 ### Graphics3D
+Almacena un meshId. El componente actúa como interfaz para realizar la representación de un mesh mediante OGRE.
 
 ### BoxCollider
-Proporciona un ortoedro sobre el cual podrán darse colisiones con otros elementos que también posean un `BoxCollider`. Una colisión entre dos elementos dados será registrada al principio del bucle del juego, y almacenada en sus partícipes durante esa misma iteración mediante un componente `CollisionData`.
+Proporciona un ortoedro sobre el cual podrán darse colisiones con otros elementos que también posean un `BoxCollider`. Este será equivalente a una BoundingBox de OGRE. Una colisión entre dos elementos dados será registrada al principio del bucle del juego, y almacenada en sus partícipes durante esa misma iteración mediante un componente `CollisionData`.
 
 ### CollisionData
 Almacena la información de una colisión que haya ocurrido en la misma iteración del bucle del juego. Este componente será añadido automáticamente por el motor a medida que sucedan los contactos entre colliders, y no deberá ser añadido manualmente. Una vez acaba la iteración del bucle, este componente es eliminado.
