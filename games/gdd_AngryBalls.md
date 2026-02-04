@@ -54,22 +54,42 @@
 ## 1. Resumen  
 
 ### 1.1. Descripción  
-Eres un caza demonios que busca capturar todos los AngryBalls posibles. Para ello destroza a los enemigos con tu ametralladora y trata de evitar que te maten escondiendote entre muros.
+Eres un caza demonios que busca capturar todos los AngryBalls posibles (Los "Angryballs son la puntuación del jugador, aunque también se utilizarán para otras acciones descritas más adelante). 
+Para ello destroza a los enemigos con tu ametralladora y trata de evitar que te maten durante la mayor cantidad de oleadas.
 
 ### 1.2. Género  
 FPS arcade
 
 ### 1.3. Público objetivo
-Adultos
+Adolescente y jovén adulto
 
 ### 1.4. Ambientación y tono  
-La acción se desarrolla dentro de una torre antigüa con una estética algo oscura.
+La acción se desarrolla en diferentes espacios abiertos como pueden ser una plaza de una ciudad desolada o un terreno baldío entre tierras. 
+Se busca un tono oscuro que mezcle un mundo desértico con los demonios a los que hay que capturar.
 
 ### 1.5. Características principales  
-- //Tampoco se muy bien que esperais aqui
+*Ritmo rápido*
+   - Movimiento fluido
+   - Muchos enemigos
+   - Muchas balas
+   - Feedback sonoro y visual
+   - Intensidad alta
+
+*Supervivencia infinita*
+   - Oleadas progresivas en dificultad
+   - La dificultad de las oleadas se mide con los siguientes parámetros:
+   -    numEnemies(wave): El número de enemigos por oleada
+   -    killPoints(wave): Cantidad de puntos que otorgan los enemigos en esa oleada
+     
+*Rejugable*
+   - Tienda: Gestión de recursos
+   - Búsqueda de la mejor puntuación
+   - Mejora de las habilidades del jugador en las mecánicas
+   - Mejora de las habilidades del jugador en la estrategia
 
 ## 2. Jugabilidad  
-Consiste en una vista en primera persona con una mirilla para apuntar y disparar. Hay que moverse por el escenario ocultandose en las diferentes coberturas para matar a los enemigos disparandoles y evitar que te den sus balas. Cuando una sala termina podrás subir una escalera para pasar a la siguiente y así hasta morir o llegar al final.
+Consiste en una vista en primera persona con una mirilla para apuntar y disparar. Hay que moverse por el escenario para matar a los enemigos disparandoles y evitar que te peguen.
+Cuando termina una oleada empezará la siguiente, habiendo en determinados momentos oleadas especiales de más calma o de más tensión (Momentos de comprar y momentos de batallas contra minijefes)
 
 ### 2.1. Objetivo del juego   
 Conseguir la mayor cantidad de AngryBalls posibles.
@@ -78,14 +98,25 @@ Conseguir la mayor cantidad de AngryBalls posibles.
 //insertar ruta absoluta de la imagen en el proyecto
 ![Diagrama de flujo](https://github.com/organizacion/repo/blob/main/docs/img/imagen.jpg)
 
-1. Empiezas una sala nueva.
-2. Matas a los enemigos pertinentes.
-3. Aparece un enemigo un poco más fuerte.
-4. Consigues una recompensa.
-5. Pasas a la siguiente sala.
+Una partida estándar tendría el siguiente ciclo:
+1. Oleada estándar
+2. Tienda
+3. Jefe
 
-//Podría ser interesante que puedas cambiar de sala cuando despejas a los enemigos y que el "boss" sea opcional para conseguir más puntuación, por ahora lo dejo como idea hasta esta noche
+*Oleada estándar:*
+Oleada compuesta por enemigos normales. 
+Incrementarán su dificultad de forma lineal teniendo en cuenta los parámetros descritos anteriormente.
+Este tipo de oleadas se darán como mínimo 3 veces seguidas antes de pasar a la siguiente.
 
+*Tienda:*
+Aparece aleatoriamente entre oleadas (Minimo cada 3 oleadas máximo cada 7) y permite comprar vidas a cambio de Angryballs.
+No tiene enemigos y permite cambiar las tornas de la partida.
+El jugador debe gestionar si le compensa más perder parte de su puntuación para conseguir vidas extras o continuar con los recursos que tiene en ese momento.
+El jugador puede tener como máximo 3 vidas a la vez.
+
+*Jefe:*
+La oleada de jefe tiene prioridad frente al resto de oleadas, si tocan dos oleadas distintas se colocará primero la del jefe y la otra con la que competía a continuación.
+Estas fases aparecerán cada 5 oleadas y el jefe debe tener una dificultad ligeramente mayor a las oleadas estándar anteriores.
 
 ## 3. Mecánicas  
 
@@ -103,25 +134,36 @@ El jugador y los enemigos podrán moverse por el plano (x, y) con libertad.
 -  Velocidad
 -  Dirección
 -  Origen (Si es un disparo enemigo o del jugador)
-El jugador y los enemigos podrán disparar un máximo de 3 balas a la vez, es decir, cada personaje solo podrá "tener" 3 balas en pantalla.
+El jugador y los enemigos podrán disparar un máximo de 3 balas a la vez, es decir, cada personaje solo podrá "tener" 5 balas en pantalla.
 Si una bala enemiga colisiona con el jugador le quitará parte de la vida y lo mismo sucederá a la inversa con las balas del jugador y los enemigos.
+
+El jugador podrá disparar 2 tipos diferentes de balas:
+- Munición normal: munición que se va agotando y hay que ir recogiendo.
+- AngryBalls: Hacen el doble de daño que las balas normales pero pierdes la puntuación que vas gastando.
+
+Las balas solo se destruirán cuando chocan contra una cobertura o cuando salen del mapa, matarán a todos los enemigos de la fila.
 
 
 ## 4. Interfaz  
 
 ### 4.1. Controles  
 - Movimiento: WASD.
-- Disparo: click izquierdo del ratón.
+- Disparo balas normales: click izquierdo del ratón.
+- Disparo de angryballs: click derecho del ratón.
+- Uso de objeto: E.
 
 ### 4.2. Cámara  
-La cámara es en primera persona y se moverá con el ratón y siempre se dispara en la dirección del centro de la cámara.
+La cámara es en primera persona y se moverá con el ratón. Siempre se dispara en la dirección del centro de la cámara.
 
 
 ### 4.3. HUD  
 //insertar ruta absoluta de la imagen 
 ![HUD](https://github.com/...)
 
-//Habría que poner un esquemita o algo de como se ve la vida del jugador la puntuación y esas cosas
+Muestra los angryballs del jugador en la esquina superior izquierda.
+Tanto la vida del jugador como la munición se muestra en la esquina inferior derecha.
+El número de oleada actual se muestra en la esquina superior derecha.
+Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior izquierda. 
 
 ### 4.4. Menús  
 - **Menú principal**
@@ -135,6 +177,21 @@ La cámara es en primera persona y se moverá con el ratón y siempre se dispara
     - Salir del Juego.
 ![Boceto HUD]()
 
+- **Menú de Tienda**
+    - Muestra objetos a comprar
+    - Precio de los objetos
+    - Estado del jugador (Vida actual y munición restante)
+    - Numero de angryballs 
+![Boceto HUD]()
+
+- **Menú de Estadísticas**
+  Muestra las siguientes estadísticas del jugador:
+  - Máxima puntuación conseguida (Angryballs)
+  - Máxima oleada que se ha alcanzado
+  - Enemigos simples matados
+  - Jefes derrotados
+![Boceto HUD]()
+
 ## 5. Mundo del juego  
 
 ### 5.1. Personajes  
@@ -142,9 +199,19 @@ La cámara es en primera persona y se moverá con el ratón y siempre se dispara
   //imagenes
   <img src="https://github.com/ruta.png" alt="Jugador 1" />
 
+  El jugador tendrá los diferentes parámetros:
+  - Vida: Al comenzar tendrá 3 vidas, por cada golpe pierde 1 vida y estas podrán recuperarse en la tienda.
+  - Munición: Balas que tiene el jugador, cuando llegue a 0 no podrá disparar más.
+  - Velocidad: Velocidad de movimiento del jugador.
+
 - **Enemigos:**
   //imagenes
   <img src="https://github.com/ruta.png" alt="Enemigo 1" />
+
+  Los enemigos tendrán los siguientes parámetros:
+  - Vida: Cuando esta llegue a 0 se eliminarán
+  - Angryballs: Numero de angryballs que da al jugador al morir.
+  - Daño: Daño que hacen los enemigos al golpear al jugador.
 
 ### 5.2. Niveles 
 - **Nivel 1:**
@@ -155,22 +222,33 @@ La cámara es en primera persona y se moverá con el ratón y siempre se dispara
    Existen dos tipos de cobertura: la cobertura completa y la cobertura parcial.
    **Cobertura completa:** Las balas de los enemigos no podrán darte de ninguna manera.
    **Cobertura parcial:** Existe un 50% de probabilidad de que la bala golpeé la cobertura o la sobrepase.
-  
-- **Cofres:**
-   Los cofres podrán contener dos cosas: Objetos o angryballs. No sirven como cobertura y una vez abiertos desaparecerán del escenario.
+   Estas aparecerán unicamente en las oleadas de jefes y permitirá cubrirse de sus proyectiles.
   
 - **Objetos:**
-   En el mapa podrás encontrar cruzes rojas que representan objetos de curación, estos recuperarán un 15% de la vida máxima del jugador.
+   Al matar a enemigos estos pueden soltarte un objeto, teniendo cada tipo de objeto una probabilidad distinta de aparecer. Los objetos pueden ser:
+  - Vida: Recupera una vida, se coge automaticamente no se almacena para usarse. Probabilidad de aparición 5%.
+  - Mejora de velocidad: Aumenta en un 25% la velocidad del personaje durante la oleada. Probabilidad de aparición 20%.
+  - Munición: Da 20 balas extra, se coge automaticamente este objeto no se almacena para usarse. Probabilidad de aparición del 65%.
+  - Munición infinita: Da duración infinita durante 5 min. Probabilidad de aparición 10%.
+
+  El jugador solo podrá mantener un objeto a la vez, si pasa por un objeto diferente este se sustituirá por el que tenía guardado.
+  Los objetos permanecerán en el suelo 1 min, si no se recogen pasado ese tiempo desaparecerán.
 
 ## 6. Experiencia de juego  
 **Dinámicas Buscadas**
-Se busca que el jugador aproveche las coberturas de manera estratégica para pasarse el nivel.
+Se busca que el jugador utilice los objetos en los momentos más eficientes. Que el jugador cree una estrategia y gestione los recursos de manera que consiga la mejor puntuación posible al final.
+Que el jugador decida cuando disparar y hacia donde para amortizar las balas de la mejor manera posible. Se busca también que el jugador se mueva por el mapa en general recogiendo los diferentes objetos y matando a los diferentes enemigos.
 
-//Si se añade lo del tiempo y la vida habría que explicarlo aquí y en el ciclo de juego cuando se explique mejor cada sección en la recompensa
+Para que la dificultad del juego vaya en aumento por oleada se incrementarán los siguientes parámetros:
+- NumEnemigos: Numero de enemigos por oleada.
+     - Vida: Aumentará la vida de los enemigos.
+     - Angryballs: Aumentarán las angryballs que sueltan los enemigos.
 
 
 **Descripción de Partida**
 Entras a La Torre y te encuentras una sala, matas a todos los enemigos (mientras puedes ir buscando cofres por la sala), al matarlos a todos se desbloquen las escaleras y aparece un mini jefe opcional, puedes o pasar de nivel o enfrentarte a él por más angryballs. En la sala final se encontrará un jefe al que se debe derrotar para finalizar el nivel.
+
+Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alejarse.
 
 ## 7. Estética y contenido  
 **Estética:**
