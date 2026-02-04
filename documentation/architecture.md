@@ -110,12 +110,16 @@ Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
 <!-- TOC --><a name="lua-sol3"></a>
-### Lua + Sol3
+### Lua + SWIG
 Usaremos Lua para crear la escena y describir los objetos y componentes en su interior. Los scripts de LUA serán capaces de llamar a entidades de cpp.
 
 - **Iteración rápida:** Modificar la disposición del nivel sin recompilar C++.
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
-- **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
+- **Binding sencillo:** SWIG expondrá factorías de entidades de C++ a Lua, y permitirá definir estructuras de datos de componentes en LUA para recibirlos en cpp sin mayor problema.
+
+#### SWIG
+https://www.swig.org/Doc1.3/Lua.html#Lua_nn1
+SWIG nos permite copiar y pegar bits. Y que cpp y LUA tengan la misma estructura de cada componente o clase que necesitemos poder compartir entre ambos 
 
 <!-- TOC --><a name="creación-de-entidades-y-componentes-desde-lua"></a>
 #### Creación de Entidades y Componentes desde LUA
@@ -129,7 +133,7 @@ extern "C"
 }
 ```
 
-Después querremos las funciones con las que comunicarnos con LUA, estas serán:
+Después querremos las funciones con las que comunicarnos con LUA, una idea de como podrían lucir estas es:
 ```cpp
 int addEntity(lua_State* L){
 	//createNewEntity devuelve el id de la nueva entidad creada
@@ -414,7 +418,7 @@ bool getKeyUp(SDL_Scancode key) {
 }
 
 ```
-Aclaraciones: El Uint8 devuelto es 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
+Aclaraciones: 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
 
 <!-- TOC --><a name="estructura-de-las-clases"></a>
 # Estructura de las clases 
