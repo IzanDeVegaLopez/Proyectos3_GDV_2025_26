@@ -70,6 +70,7 @@ La compilación y generación de ejecutables de este proyecto estará controlada
 ## Librerías a usar
 ### Ogre3D
 Usaremos ogre 3D para representar objetos 2D y 3D en el viewport. Y usaremos las AABBs que nos facilita para comprobar colisiones.
+
 ### SDL2
 Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
@@ -291,10 +292,10 @@ Se recomienda que al hacer el juego el usuario defina sus propios sistemas indep
 La gestión de entrada se realizará mediante un wrapper sobre **SDL2**. El sistema almacenará el estado de los dispositivos (teclado y ratón) del frame actual y del frame anterior para poder detectar transiciones (pulsaciones nuevas "down", liberaciones "up" y movimiento en caso del ratón).
 
 ### Implementación interna
-El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior y se sondeará a SDL para actualizar el estado actual.
+El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior. después el estado actual se actualizará selectivamente con los eventos de teclado que se reciban ese frame.
 
 #### Teclado
-SDL proporciona el estado de todo el teclado mediante `SDL_GetKeyboardState`. Usaremos `SDL_Scancode` (posición física) para indexar un array de tamaño fijo `SDL_NUM_SCANCODES` (512).
+SDL proporciona el estado de todo el teclado mediante `SDL_GetKeyboardState`. Usaremos `SDL_Scancode` (posición física) para indexar un array de tamaño fijo (256). Aunque `SDL_NUM_SCANCODES` sea 512 podemos reducir la escala a la mitad, viendo que todos los inputs utilizados dentro de videojuegos caen en las primeras 256 claves.
 
 **Justificación: Scancode vs Keycode**
 Se elige `SDL_Scancode` frente a `SDL_Keycode` por dos motivos principales:
@@ -571,6 +572,25 @@ Para poder decidir cuales se pintan antes que los objetos 3D y cuales después q
 
 ### Render3DSystem
 Hace la llamada a Ogre para que renderice los objetos 3D en la escena actual
+
+## Render de Objetos 3D
+![organización de la únion con Ogre3D](images/EsquemaUnionOgre.png)
+Usaremos nuestra arquitectura de ECS para unir Ogre con ECStasy.
+
+Necesitaremos dos nuevos componentes:
+- **tasyNode:** que contiene un vector3 de posición y un entero que apunta a la posición en la pila del nodo de ogre que contiene.
+- **tasyMesh:** que contiene un string con el nombre de la malla que usará el nodo.
+
+Los objetos de Ogre se manejan por escenas. Por lo que nosotros usaremos una parte de memoria separada por cada escena.
+
+### La Pila de Nodos de la Escena
+Usaremos una estructura que se asemeja a una pila, pero que conserva el acceso aleatorio en O(1) de sus métodos.
+
+Esto es así, porque apilaremos escenas sobre una misma estructura de datos que almacene los nodos de la escena. De forma que al salir de una escena se volverá a la anterior si había alguna. Y si no había se cerrará el juego. Eliminando todos los nodos de la escena al salir de ella.
+
+Necesitaremos una estructura auxiliar que sea un vector. Por cada escena actualmente en la pila contendrá una entrada. Cada entrada estará asignada a una de las escenas. Y contendrá un puntero a la siguiente dirección de memoría disponible para insertar nuevos nodos en la escena correspondiente.
+
+Se puede ver esta estructura representada en la imagen superior. A la izquierda debajo de Ogre Backend.
 
 
 # **Pipeline de generación de contenido** 
