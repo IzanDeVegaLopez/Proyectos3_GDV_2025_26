@@ -421,74 +421,24 @@ classDiagram
 	GameManager *-- EntityManager
 	GameManager *-- ComponentManager
 	GameManager *-- SystemManager
-	SystemManager --|> "0..*" System
+	GameManager *-- AudioManager
+	AudioManager -- Fmod
+	SystemManager *-- "0..*" System
 	EntityManager --> "0..*" Entity
 	ComponentManager *-- "0..*" ComponentA
 	ComponentManager *-- "0..*" ComponentB
 	ComponentManager *-- "0..*" ComponentN
-	SystemManager --> "0..*" SystemA
-	SystemManager --> "0..*" SystemB
 	System <|-- "0..*" SystemA
 	System <|-- "0..*" SystemB
-	
-	SparseSet <|-- SparseDataSet
-	class Entity{
-		-alive
-		+isAlive() : bool
-	}
-	class LogManager{
-		+constructor(string file_name)
-		+print(string format, ...)$
-	}
-	class SystemManager{
-		-vector~System~ mSystemList
-		+update(double dt, GameManager&)
-	}
-	class System{
-		+update(double dt, GameManager&)*
-	}
-	class ComponentManager{
-		# these SparseSets are type erased,
-		# size of component is passed at runtime
-		-vector~SparseSet~ mComponentsPerEntity
+	Game ..> ECStasy
+	ECStasy -- GameManager
 
-		+get~Component~(int entityId, int componentId) Component [const]&
-		+emplace~Component~(int entityId, int componentId) Component&
-		+insert~Component~(int entityId, int componentId, Component const& component)
-		+remove~Component~(int entityId, int componentId)
-		+has~Component~(int entityId, int componentId) bool
-	}
-	class GameManager{
-		# game manager owns its parts
-		-EntityManager mEntityManager
-		-ComponentManager mComponentManager
-		-SystemManager mSystemManager
-	}
-    class EntityManager{
-        -SparseSet~int~ allEntities
-		-vector~SparseSet~Entity&~~ mGroups
-		-vector~SparseSet~Entity&~~ mScenes
-		+GetEntitiesInGroup(int entityGroupId) vector~int~&
-		+GetEntitiesInScene(int entitySceneId) vector~int~&
-		+markEntityAsDead(int entityId)
-		+update()
-		-mEraseAllDeadEntities()
-    }
-	class SparseSet{
-		-vector~int~ mIdxDisperseSet
-		-vector~int~ mBacklinksDenseSet
-		+iterator
-		+begin()
-		+end()
-		-insertElement(int index)
-		-eraseElement(int index)
-	}
-    class SparseDataSet~T~{
-		-vector~T~ mDataDenseSet
-		+getElementByIdx(int index) T&
-		-insertElement(int index)
-		-eraseElement(int index)
-    }
+	GameManager *-- OgreManager
+	OgreManager *-- OgreSceneNode
+	OgreManager -- Ogre3D
+
+	Game -- LUA_scene_file
+	LUA_scene_file ..> ECStasy
 ```
 
 <!-- TOC --><a name="raii"></a>
