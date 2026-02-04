@@ -81,7 +81,7 @@ Usaremos Lua para crear la escena y describir los objetos y componentes en su in
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
 - **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
 
-#### Llamar funciones de cpp en LUA
+#### Creación de Entidades y Componentes desde LUA
 Primero necesitaremos incluir las dependencias para trabajar con lua
 ```cpp
 extern "C"
@@ -167,6 +167,31 @@ for i=0,10,1 do
 	addComponent(ent, "tasy_node_name", "cube_mesh", true);
 end
 ```
+
+## Creación de Blueprints
+Podremos crear blueprints desde lua creando funciones
+
+Por ejemplo:
+```lua
+function createEnemy(posX, posY){
+	int id = createEntity()
+	addComponent(id, "componentX", posX, posY, 0);
+	addComponent(id, "componentY", 12, 3);
+	return id;
+}
+```
+
+Podríamos usar estas funciones desde cpp con el siguiente wrapper:
+```cpp
+void callLuaFunc(string& functionName, parameters ...){
+	if (functionName in LUA is found and is function){
+		execute_function(parameters...)
+	}else{
+		LogSystem::log("Error calling function functionName, errorCause");
+	}
+}
+```
+Referencia https://www.saoe.net/blog/cpp-and-lua-call-function/
 
 ## Interfaz de comunicación con el juego desde el motor
 La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
