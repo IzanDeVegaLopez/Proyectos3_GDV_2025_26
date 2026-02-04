@@ -54,7 +54,7 @@
 - Objetivos:
     - Librerías compiladas y compilación automática
     - Primeros componentes sencillos (¡incluso vacíos\!).
-    - Cargar mapas básicos (json) con esos componentes.
+    - Cargar mapas básicos (lua) con esos componentes.
     - “Juegos” en los repositorios con “componentes” (aunque sean vacíos) cargados desde mapas.
     - Puesta en marcha y bucle principal.  
     - Escenas (idealmente con alguna malla que vayamos a utilizar renderizada)
@@ -75,7 +75,20 @@
 
 # Metas por semanas
 ## Semana 6-2
+- Lectura de datos de un fichero lua interpretado
+- Estructura de datos Sparse Set
+- Estructura de datos any_vec
+- Asignación automática de ID de las entidades
+- Componentes unidos a entidades
+- Llamadas a funciones especiales del juego desde el motor
+- Llamadas a funciones del motor desde el juego
+- Creación y llamadas a sistemas del motor en el main
+- Organización en carpetas
 ## Semana 13-2
+- Unión con Ogre
+- Unión con SDL para el input
+- Unión con FMOD
+- Compilación automática
 ## Semana 20-2
 ## Semana 27-2
 ## Semana 6-3
