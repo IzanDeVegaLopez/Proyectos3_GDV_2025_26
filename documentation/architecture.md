@@ -75,24 +75,97 @@ Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
 ### Lua + Sol3
-Usaremos Lua para evitar recompilar C++ al cambiar parametros del juego o de las escemas.
+Usaremos Lua para crear la escena y describir los objetos y componentes en su interior. Los scripts de LUA serán capaces de llamar a entidades de cpp.
 
-Por tanto, usaremos Lua para crear la escena y describir los objetos y componentes en su interior, usamos un script de Lua que llama a funciones de C++ para crear los objetos. Esto nos ofrece ventajas como:
 - **Iteración rápida:** Modificar la disposición del nivel sin recompilar C++.
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
 - **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
+
+#### Llamar funciones de cpp en LUA
+Primero necesitaremos incluir las dependencias para trabajar con lua
+```cpp
+extern "C"
+{
+#include "lua/lua.h" //https://www.lua.org/source/5.3/lua.h.html
+#include "lua/lualib.h" //https://www.lua.org/source/5.3/lualib.h.html
+#include "lua/lauxlib.h" //https://www.lua.org/source/5.4/lauxlib.h.html
+}
+```
+
+Después querremos las funciones con las que comunicarnos con LUA, estas serán:
+```cpp
+int addEntity(lua_State* L){
+	//createNewEntity devuelve el id de la nueva entidad creada
+	//Le pasamos el id de la entidad a lua
+	lua_pushnumber(L, EntityManager->createNewEntity());
+	//devuelve el número de valores devueltos
+	return 1;
+}
+
+//recibe como argumento el ID de una entidad, el string con el nombre del componente, y el resto de argumentos son los parametros del constructor del componente
+int addComponent(lua_State* L){
+	//Cogemos el segundo argumento que LUA le haya pasado a esta función
+	string componentName = lua_tostring(L,2);
+	auto componentID = EntityManager->componentMap.find(componentName);
+	if(componentID==EntityManager->componentMap.end()){
+		throw "Component " +componentName+" Not found";
+	}
+	//Cogemos el primer argumento que LUA le haya pasado a esta función
+	string entityId = lua_tointeger(L,1);
+	//lua_gettop() da el número de parametros q tiene esta función
+	int number_of_parameters = (lua_gettop(L)-2);
+	//componentParameters es una lista de punteros a void pero con los argumentos con el tipo correspondiente
+	void** componentParameters = malloc(sizeof(void*)*number_of_parameters);
+	
+	for(int i = 2; i < 2+number_of_parameters; ++i){
+		switch(lua_type(L,i)){
+			case LUA_TBOOLEAN:
+				componentParameters[i-2] = new bool(lua_tobool(L,i));
+			break;
+			case LUA_TNUMBER:
+				componentParameters[i-2] = new double(lua_tointeger(L,i));
+			break;
+			case LUA_TSTRING:
+				componentParameters[i-2] = new double(lua_tostring(L,i));
+				break;
+		}
+	}
+	createAndAttachNewComponent(entityId, componentId, componentParameters);
+	for(int i = 0; i < number_of_parameters; ++i){
+		delete componentParameters[i];
+	}
+	free(componentParameters);
+	return 0;
+}
+```
+
+Después en el main:
+```cpp
+int main(){
+	const char file[]="script.txt";
+	lua_State *L=lua_open();
+    luaL_openlibs(L);
+	lua_register(L,"addEntity", addEntity);
+	lua_register(L,"addComponent", addComponent);
+	int s=loaL_loadfile(L,file);
+	if(s==0)
+   	{
+      //Ejecución del archivo
+      s=lua_pcall(L, 0, LUA_MULTRET, 0);
+   	}
+    lua_close(L);
+   	cin.get();
+   	return 0;
+}
+```
+
+De forma que luego en el archivo de LUA podríamos usarlo así:
 ```lua
-	-- scene_loader.lua
-	print("Cargando nivel bosque...")
-
-	local player = crearEntidad("Jugador")
-	player:setPos(0, 0)
-
-	-- Podemos usar bucles! Esto es la ventaja sobre un txt
-	for i = 1, 10 do
-	    local arbol = crearEntidad("Arbol")
-	    arbol:setPos(i * 5, 0)
-	end
+for i=0,10,1 do 
+	ent = addEntity();
+	addComponent(ent, "tasy_node", 0,0,0);
+	addComponent(ent, "tasy_node_name", "cube_mesh", true);
+end
 ```
 
 ## Interfaz de comunicación con el juego desde el motor

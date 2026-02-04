@@ -1,3 +1,18 @@
+- [Estructura de Datos: SparseSet](#estructura-de-datos-sparseset)
+            - [Características](#características)
+            - [Objetivo](#objetivo)
+            - [Implementación](#implementación-1)
+                - [Inserción en O(1)](#inserción-en-o(1))
+                - [Eliminación en O(1)](#eliminación-en-o(1))
+                - [Iteración de todos sus elementos en O(N) y en memoría contigua](#iteración-de-todos-sus-elementos-en-o(n)-y-en-memoria-contigua)
+                - [Añadiendo datos](#añadiendo-datos)
+        - [Uso de SparseSet para Entidades y Componentes](#uso-de-sparseset-para-entidades-y-componentes)
+            - [Añadir Entidades](#añadir-entidades)
+            - [Añadir Componentes](#añadir-componentes)
+            - [Eliminar Componentes](#eliminar-componentes)
+            - [Eliminar una Entidad](#eliminar-una-entidad)
+        - [Grupos y Escenas](#grupos-y-escenas)
+        - [Ejemplo completo](#ejemplo-completo)
 # Estructura de Datos: SparseSet
 - Referencia https://skypjack.github.io/2020-08-02-ecs-baf-part-9/
 - Contiene un array disperso, de índices; un array denso, de datos(opcional); y un array de backlinks, denso también, de igual tamaño que el de datos, que contiene los índices que se corresponden en el array disperso
