@@ -146,6 +146,9 @@ Las balas solo se destruirán cuando chocan contra una cobertura o cuando salen 
 
 ## 4. Interfaz  
 
+El botón seleccionado se simboliza con un resaltado amarillo en el texto y una AngryBall a su izquierda.
+Todas las imagenes son conceptuales y orientativas, no el diseño definitivo para el juego.
+
 ### 4.1. Controles  
 - Movimiento: WASD.
 - Disparo balas normales: click izquierdo del ratón.
@@ -157,8 +160,7 @@ La cámara es en primera persona y se moverá con el ratón. Siempre se dispara 
 
 
 ### 4.3. HUD  
-//insertar ruta absoluta de la imagen 
-![HUD](https://github.com/...)
+![HUD](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_HUD.png)
 
 Muestra los angryballs del jugador en la esquina superior izquierda.
 Tanto la vida del jugador como la munición se muestra en la esquina inferior derecha.
@@ -170,19 +172,23 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
     - Jugar.
     - Salir.
     - Estadísticas.
-![image]()
+      
+![Boceto Menu principal](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_Menu%CC%81_Principal.png)
 
 - **Menú de Fin de Juego**
     - Menú principal.
     - Salir del Juego.
-![Boceto HUD]()
+      
+![Boceto Menu fin](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_Menu%CC%81_Fin.png)
 
 - **Menú de Tienda**
     - Muestra objetos a comprar
     - Precio de los objetos
     - Estado del jugador (Vida actual y munición restante)
-    - Numero de angryballs 
-![Boceto HUD]()
+    - Numero de angryballs
+
+      Se coloca sobre la pantalla de juego pero bajo el HUD.
+![Boceto tienda](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Tienda.png)
 
 - **Menú de Estadísticas**
   Muestra las siguientes estadísticas del jugador:
@@ -190,7 +196,8 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
   - Máxima oleada que se ha alcanzado
   - Enemigos simples matados
   - Jefes derrotados
-![Boceto HUD]()
+    
+![Boceto Estadísticas](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_menu%CC%81_estadi%CC%81sticas.png)
 
 ## 5. Mundo del juego  
 
