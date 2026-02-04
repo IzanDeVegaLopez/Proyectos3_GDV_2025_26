@@ -1,42 +1,74 @@
 ## Indice
-
-- [Estructura de la solución y proyectos (y repositorios de Git)](#estructura-de-la-solución-y-proyectos-(y-repositorios-de-git))
-	- [Librerías a usar](#librerías-a-usar)
-		- [Ogre3D](#ogre3d)
-		- [SDL2](#sdl2)
-		- [Fmod](#fmod)
-	- [Interfaz de comunicación con el juego desde el motor](#interfaz-de-comunicación-con-el-juego-desde-el-motor)
-		- [Flujo de control Motor-Juego](#flujo-de-control-motor-juego)
-	- [Uso de métodos del motor desde el juego](#uso-de-métodos-del-motor-desde-el-juego)
-- [Estructura de las clases](#estructura-de-las-clases)
-	- [Leyenda de los diagramas](#leyenda-de-los-diagramas)
-		- [Sintáxis](#sintáxis)
-			- [Prefijos](#prefijos)
-			- [Sufijos](#sufijos)
-			- [Relaciones](#relaciones)
-	- [RAII](#raii)
-		- [Aplicación de RAII](#aplicación-de-raii)
-		- [Finalidad](#finalidad)
-	- [Clases Importantes](#clases-importantes)
-		- [EntityManager](#entitymanager)
-		- [ComponentManager](#componentmanager)
-		- [Componentes](#componentes)
-		- [LogManager](#logmanager)
-	- [Colisiones](#colisiones)
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+   * [Indice](#indice)
+- [Estructura de la solución y proyectos (y repositorios de Git) ](#estructura-de-la-solución-y-proyectos-y-repositorios-de-git)
+   * [Estructura de la solución en local:](#estructura-de-la-solución-en-local)
+   * [Estructura de la solución por repositorios:](#estructura-de-la-solución-por-repositorios)
+   * [Librerías a usar](#librerías-a-usar)
+      + [Ogre3D](#ogre3d)
+      + [SDL2](#sdl2)
+      + [Fmod](#fmod)
+      + [Lua + Sol3](#lua-sol3)
+         - [Creación de Entidades y Componentes desde LUA](#creación-de-entidades-y-componentes-desde-lua)
+   * [Blueprints](#blueprints)
+      + [Creación de Blueprints](#creación-de-blueprints)
+         - [En LUA](#en-lua)
+         - [En C++](#en-c)
+   * [Interfaz de comunicación con el juego desde el motor](#interfaz-de-comunicación-con-el-juego-desde-el-motor)
+      + [Flujo de control Motor-Juego ](#flujo-de-control-motor-juego)
+   * [Uso de métodos del motor desde el juego](#uso-de-métodos-del-motor-desde-el-juego)
+   * [Creación de componentes desde el juego](#creación-de-componentes-desde-el-juego)
+   * [Creación de sistemas desde el juego](#creación-de-sistemas-desde-el-juego)
+   * [Input](#input)
+      + [Implementación interna](#implementación-interna)
+         - [Teclado](#teclado)
+         - [Ratón](#ratón)
+      + [Estructura de Datos](#estructura-de-datos)
+- [Estructura de las clases ](#estructura-de-las-clases)
+   * [Leyenda de los diagramas](#leyenda-de-los-diagramas)
+      + [Sintáxis](#sintáxis)
+         - [Prefijos](#prefijos)
+         - [Sufijos](#sufijos)
+         - [Relaciones](#relaciones)
+   * [RAII](#raii)
+      + [Aplicación de RAII](#aplicación-de-raii)
+      + [Finalidad](#finalidad)
+   * [Clases Importantes](#clases-importantes)
+      + [SystemInterface](#systeminterface)
+      + [EntityManager](#entitymanager)
+      + [ComponentManager](#componentmanager)
+      + [LogManager](#logmanager)
+   * [Colisiones](#colisiones)
 - [Estructura de componentes del motor y juegos](#estructura-de-componentes-del-motor-y-juegos)
-	- [Arquitectura Escogida: ECS](#arquitectura-escogida-ecs)
-	- [Implementación](#implementación)
-	- [Componentes Base del Motor](#componentes-base-del-motor)
-		- [Representation2D](#representation2d)
-			- [Implementación](#implementación-2)
-		- [Representacion3D](#representation3d)
-	- [Sistemas Base del Motor](#sistemas-base-del-motor)
-		- [CollisionSystem](#collisionsystem)
-		- [Render2DSystem](#render2dsystem)
-		- [Render3Dsystem](#render3dsystem)
-- [Pipeline de generación de contenido](#pipeline-de-generación-de-contenido)
+   * [Arquitectura Escogida: ECS](#arquitectura-escogida-ecs)
+   * [Implementación](#implementación)
+   * [Componentes Base del Motor](#componentes-base-del-motor)
+      + [Transform2D](#transform2d)
+      + [Orientation](#orientation)
+      + [Scale](#scale)
+      + [tasy_node](#tasy_node)
+      + [tasy_nodeName](#tasy_nodename)
+      + [Graphics2D](#graphics2d)
+      + [Graphics3D](#graphics3d)
+      + [BoxCollider](#boxcollider)
+      + [CollisionData](#collisiondata)
+   * [Sistemas Base del Motor](#sistemas-base-del-motor)
+      + [CollisionSystem](#collisionsystem)
+         - [Raycast Collision](#raycast-collision)
+      + [Input System](#input-system)
+      + [Render2DSystem](#render2dsystem)
+         - [Implementación](#implementación-1)
+      + [Render3DSystem](#render3dsystem)
+   * [Render de Objetos 3D](#render-de-objetos-3d)
+      + [La Pila de Nodos de la Escena](#la-pila-de-nodos-de-la-escena)
+- [**Pipeline de generación de contenido** ](#pipeline-de-generación-de-contenido)
 
+<!-- TOC end -->
+
+<!-- TOC --><a name="indice"></a>
+<!-- TOC --><a name="estructura-de-la-solución-y-proyectos-y-repositorios-de-git"></a>
 # Estructura de la solución y proyectos (y repositorios de Git) 
+<!-- TOC --><a name="estructura-de-la-solución-en-local"></a>
 ## Estructura de la solución en local:
 - src
 	- Engine
@@ -57,6 +89,7 @@
      	- dll juego ... (Debug & Release)
       	- assets (cmake hace una copia de los que estan subidos al repo)
   
+<!-- TOC --><a name="estructura-de-la-solución-por-repositorios"></a>
 ## Estructura de la solución por repositorios:
 - src
 	- project
@@ -67,14 +100,19 @@
 
 La compilación y generación de ejecutables de este proyecto estará controlada por un fichero "CMakeLists.txt".
 
+<!-- TOC --><a name="librerías-a-usar"></a>
 ## Librerías a usar
+<!-- TOC --><a name="ogre3d"></a>
 ### Ogre3D
 Usaremos ogre 3D para representar objetos 2D y 3D en el viewport. Y usaremos las AABBs que nos facilita para comprobar colisiones.
 
+<!-- TOC --><a name="sdl2"></a>
 ### SDL2
 Usaremos SDL2 para manejar el input de teclado y ratón.
+<!-- TOC --><a name="fmod"></a>
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
+<!-- TOC --><a name="lua-sol3"></a>
 ### Lua + Sol3
 Usaremos Lua para crear la escena y describir los objetos y componentes en su interior. Los scripts de LUA serán capaces de llamar a entidades de cpp.
 
@@ -82,6 +120,7 @@ Usaremos Lua para crear la escena y describir los objetos y componentes en su in
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
 - **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
 
+<!-- TOC --><a name="creación-de-entidades-y-componentes-desde-lua"></a>
 #### Creación de Entidades y Componentes desde LUA
 Primero necesitaremos incluir las dependencias para trabajar con lua
 ```cpp
@@ -169,13 +208,16 @@ for i=0,10,1 do
 end
 ```
 
+<!-- TOC --><a name="blueprints"></a>
 ## Blueprints
 Los blueprints son plantillas para crear objetos complejos de forma sencilla.
 
 Normalmente son una descripción de una entidad y sus componentes asociados junto con los parametros que toman dichos componentes inicialmente.
 Algunos plantillas pueden recibir argumentos para provocar cambios mínimos en el producto final.
 
+<!-- TOC --><a name="creación-de-blueprints"></a>
 ### Creación de Blueprints
+<!-- TOC --><a name="en-lua"></a>
 #### En LUA
 Por ejemplo:
 ```lua
@@ -199,16 +241,19 @@ void callLuaFunc(string& functionName, parameters ...){
 ```
 Referencia https://www.saoe.net/blog/cpp-and-lua-call-function/
 
+<!-- TOC --><a name="en-c"></a>
 #### En C++
 Basicamente es la misma idea que con LUA, crear funciones que creen las entidades con los componentes inicializados a los valores que sean y que posiblemente reciban ciertos parametros.
 
 Y con la facilidad de que solo tenemos que bindear una función de cpp a lua para poder llamarla cuantas veces sean necesarias.
 
+<!-- TOC --><a name="interfaz-de-comunicación-con-el-juego-desde-el-motor"></a>
 ## Interfaz de comunicación con el juego desde el motor
 La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
 Esta clase definirá los metodos initGame(), updateGame() y exitGame().
 El motor llamará a estos métodos. Como se puede ver en el siguiente gráfico.
 
+<!-- TOC --><a name="flujo-de-control-motor-juego"></a>
 ### Flujo de control Motor-Juego 
 
 ```txt
@@ -270,17 +315,20 @@ Engine  0----1    2----3      <--4----5    6-------x
     like freeing engine resources.
 ```
 
+<!-- TOC --><a name="uso-de-métodos-del-motor-desde-el-juego"></a>
 ## Uso de métodos del motor desde el juego
 Cada uno de los métodos anteriormente mencionados (initGame(), updateGame() y exitGame()) recibirá como argumento un puntero o una referencia a un struct que contengan punteros a todas las funciones del motor que serán públicas. Esta estructura se llamará GameContext. De forma que desde las siguientes funciones se puede acceder a cualquiera de los métodos expuestos del motor con una sintaxis similar a esta: 
 ```cpp
 gameContextRef->getEntitiesWithComponent(X)
 ```
 
+<!-- TOC --><a name="creación-de-componentes-desde-el-juego"></a>
 ## Creación de componentes desde el juego
 Para crear un componente para el juego se tienen que dar los siguientes pasos:
 - **1.** Crear un .hpp que contenga la definición de un struct, con los atributos del componente. Este fichero contiene un atributo que es el string que buscaremos en pasos posteriores para identificar este componente.
 - **2.** En el archivo de la escena de LUA leemos cada entidad y comprobamos los atributos que contienen. Dichos atributos deberían coincidir con el string de los distintos componentes existentes. En caso de encontrar alguno en el que esto no sea así lanzaremos una excepción. Cada vez que se lea un componente completo sin errores se añadirá a la lista de componentes en ejecución del juego en cpp.
 
+<!-- TOC --><a name="creación-de-sistemas-desde-el-juego"></a>
 ## Creación de sistemas desde el juego
 En ningún momento el juego podrá crear sistemas. Ni tener acceso directo a los sistemas del motor.
 
@@ -288,12 +336,15 @@ Se dota al juego de la función updateGame(). Es responsabilidad de quien progra
 
 Se recomienda que al hacer el juego el usuario defina sus propios sistemas independientes a los del juego y que así decida el orden y cuando los llama. Pero se deja la libertad desde el motor de usar cualquier otro paradigma de programación compatible.
 
+<!-- TOC --><a name="input"></a>
 ## Input
 La gestión de entrada se realizará mediante un wrapper sobre **SDL2**. El sistema almacenará el estado de los dispositivos (teclado y ratón) del frame actual y del frame anterior para poder detectar transiciones (pulsaciones nuevas "down", liberaciones "up" y movimiento en caso del ratón).
 
+<!-- TOC --><a name="implementación-interna"></a>
 ### Implementación interna
 El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior. después el estado actual se actualizará selectivamente con los eventos de teclado que se reciban ese frame.
 
+<!-- TOC --><a name="teclado"></a>
 #### Teclado
 SDL proporciona el estado de todo el teclado mediante `SDL_GetKeyboardState`. Usaremos `SDL_Scancode` (posición física) para indexar un array de tamaño fijo (256). Aunque `SDL_NUM_SCANCODES` sea 512 podemos reducir la escala a la mitad, viendo que todos los inputs utilizados dentro de videojuegos caen en las primeras 256 claves.
 
@@ -302,11 +353,13 @@ Se elige `SDL_Scancode` frente a `SDL_Keycode` por dos motivos principales:
 1.  **Independencia del Layout (Layout Agnostic):** El Scancode referencia la ubicación física de la tecla en el hardware, independientemente del idioma configurado en el sistema operativo. Esto garantiza que los controles estándar de movimiento (como **WASD**) mantengan la misma posición ergonómica para el jugador, incluso si utiliza un teclado con distribución AZERTY o Dvorak.
 2.  **Acceso Directo a Memoria:** La función `SDL_GetKeyboardState` devuelve un puntero a un array interno de SDL indexado nativamente por Scancodes. Usar Keycodes (que representan el carácter 'A', 'B', etc.) requeriría realizar una conversión o "mapeo" adicional en cada consulta, añadiendo una sobrecarga innecesaria.
 
+<!-- TOC --><a name="ratón"></a>
 #### Ratón
 Para el ratón gestionaremos dos tipos de datos:
 1.  **Botones:** Un array de 5 booleanos/enteros (Izquierdo, Central, Derecho, X1, X2).
 2.  **Posición:** Un par de coordenadas (X, Y) para saber dónde está el cursor y cuánto se ha movido (Delta).
 
+<!-- TOC --><a name="estructura-de-datos"></a>
 ### Estructura de Datos
 La clase `InputManager` contendrá:
 ```cpp
@@ -322,24 +375,30 @@ Vector2 mouseLastPos;                      // Posición frame anterior (X,Y)
 ```
 Aclaraciones: El Uint8 devuelto es 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
 
+<!-- TOC --><a name="estructura-de-las-clases"></a>
 # Estructura de las clases 
 
 Documentación de Mermaid para construir los gráficos: 
 	https://mermaid.js.org/syntax/classDiagram.html
 ---
+<!-- TOC --><a name="leyenda-de-los-diagramas"></a>
 ## Leyenda de los diagramas
+<!-- TOC --><a name="sintáxis"></a>
 ### Sintáxis
 "*function() \: returnType*"
 
+<!-- TOC --><a name="prefijos"></a>
 #### Prefijos
 - \+ Public
 - \- Private
 - \# Protected
 
+<!-- TOC --><a name="sufijos"></a>
 #### Sufijos
 - \$ Static
 - \* Abstract (Cursiva)
 
+<!-- TOC --><a name="relaciones"></a>
 #### Relaciones
 ```mermaid
 classDiagram
@@ -432,9 +491,11 @@ classDiagram
     }
 ```
 
+<!-- TOC --><a name="raii"></a>
 ## RAII
 Todas nuestras clases usarán la técnica de programación RAII: https://en.cppreference.com/w/cpp/language/raii.html.
 
+<!-- TOC --><a name="aplicación-de-raii"></a>
 ### Aplicación de RAII
 - Encapsular cada recurso en una clase, donde:
 	- el constructor reserva el recurso y se asegura de instaurar todos los invariantes de representación o lanzar una excepción si esto es imposible
@@ -446,13 +507,16 @@ Todas nuestras clases usarán la técnica de programación RAII: https://en.cppr
 Esto implica que aquellas clases que requieran reservar memoria para funcionar se ocuparan de liberarla automáticamente en su destrucción.
 Es decir, el tiempo de vida de un recurso será menor o igual al tiempo de vida del objeto que lo contiene.
 
+<!-- TOC --><a name="finalidad"></a>
 ### Finalidad
 El uso de RAII pretende conseguir:
 - Que no haya memory leaks
 - Que no pueda haber acceso a regiones de memoria sin inicializar o con basura
 
+<!-- TOC --><a name="clases-importantes"></a>
 ## Clases Importantes
 
+<!-- TOC --><a name="systeminterface"></a>
 ### SystemInterface
 Implementa: 
 - initSystem() 
@@ -460,15 +524,18 @@ Implementa:
 - destroySystem()
 Todos los sistemas tanto del motor como de los juegos heredan de esta clase base.
 
+<!-- TOC --><a name="entitymanager"></a>
 ### EntityManager
 - Contiene la lista (SparseSet) con todas las entidades vivas.
 - Todas las entidades que contiene serán siempre validas
 
+<!-- TOC --><a name="componentmanager"></a>
 ### ComponentManager
 - Contiene una lista por tipo de componente posible
 - La misma posición de distintas listas de componentes serán componentes pertenecientes a la misma entidad. Esta posición además coincidirá con la posición de la entidad en la lista de entidades del EntityManager
 - Las listas de componentes
 
+<!-- TOC --><a name="logmanager"></a>
 ### LogManager
 - Todos los mensajes sacados por el motor o por el juego serán producidos por una instancia de esta clase
 - Los mensajes serán reflejados en un fichero .log contenido en la carpeta logs del proyecto.
@@ -477,12 +544,15 @@ Todos los sistemas tanto del motor como de los juegos heredan de esta clase base
 - Se instancia al inicio con el motor, y se cierra con el motor
 - Acceso al metodo print estatico de esta clase para que pueda escribir quien sea
 
+<!-- TOC --><a name="colisiones"></a>
 ## Colisiones
 - Cuando hay colisión entre dos entidades se añade un componente (CollisionComponent) a cada una (si no lo tienen ya). En este componente hay un buffer de tamaño fijo que almacena los indices de los otros objetos contra los que se ha chocado en este frame. Al final de cada frame este componente se eliminará de todos los objetos que lo tengan
 - A la hora de crear el juego se podrán consultar las colisiones de una entidad con getEntityCollisions(int entityId), que devolverá una lista de indices.
   
-# **Estructura de componentes del motor y juegos**
+<!-- TOC --><a name="estructura-de-componentes-del-motor-y-juegos"></a>
+# Estructura de componentes del motor y juegos
 
+<!-- TOC --><a name="arquitectura-escogida-ecs"></a>
 ## Arquitectura Escogida: ECS
 Usaremos como base para nuestra arquitectura el modelo Entity Componente System o ECS.
 
@@ -499,44 +569,57 @@ Los sistemas tienen una flag active. El método update hará return en la primer
 Una única instancia de cada sistema es creada y gestionada por el system manager. La memoría para todos los sistemas se reserva al comienzo de la ejecución y no se liberará hasta que no se cierre el juego.
 El juego no podrá interactuar con los sistemas del motor de manera directa ni crear los suyos propios.
 
+<!-- TOC --><a name="implementación"></a>
 ## Implementación
 Usaremos extensivamente SparseSet para representar entidades, componentes y grupos de entidades.
 Se puede ver una explicación detallada de SparseSet [aquí](anexos/SparseSet.md).
 
+<!-- TOC --><a name="componentes-base-del-motor"></a>
 ## Componentes Base del Motor
 
+<!-- TOC --><a name="transform2d"></a>
 ### Transform2D
 Almacena la posición y escala de la entidad como un `Vector2<float>`, y la rotación como un `float` representando el ángulo en radianes a partir del `Vector2(1,0)`, en sentido antihorario.
 
+<!-- TOC --><a name="orientation"></a>
 ### Orientation
 Quaternion que almacena la orientación de un objeto.
 
+<!-- TOC --><a name="scale"></a>
 ### Scale
 Vector 3 que almacena la escala en los ejes "xyz" del objeto
 
+<!-- TOC --><a name="tasy_node"></a>
 ### tasy_node
 Almacena en un vector3 de floats (4 bytes) la posición del objeto y en un un entero de 4 bytes el índice del nodo de ogre que tiene asignado.
 Por lo tanto al añadir el componente tasy_node a un elemento de la escena se genera también un nodo de ogre vinculado a él. Y al quitarselo se elimina consigo el nodo de ogre.
 
+<!-- TOC --><a name="tasy_nodename"></a>
 ### tasy_nodeName
 Almacena en como mucho 8 caracteres el nombre de la malla asignada.
 
+<!-- TOC --><a name="graphics2d"></a>
 ### Graphics2D
 Almacena un textureId. Un textureId será un entero asignado en tiempo de ejecución.
 
 Tiene un flag de un bit que indica si se dibuja en el viewport antes o después de los objetos 3D.
 
+<!-- TOC --><a name="graphics3d"></a>
 ### Graphics3D
 Almacena un meshId como `string`. El componente actúa como interfaz para realizar la representación de un mesh mediante OGRE, cuyo nodo será almacenado en un `SparseSet` aparte.
 
+<!-- TOC --><a name="boxcollider"></a>
 ### BoxCollider
 Proporciona un ortoedro sobre el cual podrán darse colisiones con otros elementos que también posean un `BoxCollider`. Este será equivalente a una BoundingBox de OGRE. Una colisión entre dos elementos dados será registrada al principio del bucle del juego, y almacenada en sus partícipes durante esa misma iteración mediante un componente `CollisionData`.
 
+<!-- TOC --><a name="collisiondata"></a>
 ### CollisionData
 Almacena la información de una colisión que haya ocurrido en la misma iteración del bucle del juego. Este componente será añadido automáticamente por el motor a medida que sucedan los contactos entre colliders, y no deberá ser añadido manualmente. Una vez acaba la iteración del bucle, este componente es eliminado.
 
+<!-- TOC --><a name="sistemas-base-del-motor"></a>
 ## Sistemas Base del Motor
 
+<!-- TOC --><a name="collisionsystem"></a>
 ### CollisionSystem
 Detecta colisiones entre objetos de dos grupos o escenas (no necesariamente distintos).
 
@@ -546,13 +629,16 @@ Al comienzo de cada ciclo de juego comprobará las colisiones entre todos los gr
 
 Es el responsable de que dos objetos no puedan encontrarse uno dentro del otro.
 
+<!-- TOC --><a name="raycast-collision"></a>
 #### Raycast Collision
 Ogre permite usar trazado de rayos para colisioner con las AABBs de objetos en escena: https://wiki.ogre3d.org/tiki-index.php?page=Raycasting+to+the+polygon+level#Method_for_raycast
 
+<!-- TOC --><a name="input-system"></a>
 ### Input System
 Ver el apartado [Input](#input).
 Guarda el input y permite al juego obtener información de que teclas han sido pulsadas este frame, cuales estan pulsadas y cuales se han dejado de pulsar este frame.
 
+<!-- TOC --><a name="render2dsystem"></a>
 ### Render2DSystem
 Itera sobre la lista de objetos con representación 2D y los plasma en pantalla.
 
@@ -563,6 +649,7 @@ Tiene 2 metodos:
 Si además estos objetos tienen un Transform2D usará la escala, rotación y posición para obtener donde pintar la textura en el Viewport.
 En caso de no tener un Transform2D usará rotación 0, posición (0,0) y escala (1,1).
 
+<!-- TOC --><a name="implementación-1"></a>
 #### Implementación
 Podríamos usar SDL para pintar cosas en 2D, pero ya que vamos a usar ogre para dibujar en 3D posiblemente sea más sencillo hacerlo todo con este ultimo.
 
@@ -570,9 +657,11 @@ Aquí hay un ejemplo de código que implementa sprites 2d en Ogre: https://wiki.
 
 Para poder decidir cuales se pintan antes que los objetos 3D y cuales después que los objetos 2D asignandoles distintos render queues IDs. Se renderiza del más bajo al más alto. Fuente: https://forums.ogre3d.org/viewtopic.php?p=265546
 
+<!-- TOC --><a name="render3dsystem"></a>
 ### Render3DSystem
 Hace la llamada a Ogre para que renderice los objetos 3D en la escena actual
 
+<!-- TOC --><a name="render-de-objetos-3d"></a>
 ## Render de Objetos 3D
 ![organización de la únion con Ogre3D](images/EsquemaUnionOgre.png)
 Usaremos nuestra arquitectura de ECS para unir Ogre con ECStasy.
@@ -583,6 +672,7 @@ Necesitaremos dos nuevos componentes:
 
 Los objetos de Ogre se manejan por escenas. Por lo que nosotros usaremos una parte de memoria separada por cada escena.
 
+<!-- TOC --><a name="la-pila-de-nodos-de-la-escena"></a>
 ### La Pila de Nodos de la Escena
 Usaremos una estructura que se asemeja a una pila, pero que conserva el acceso aleatorio en O(1) de sus métodos.
 
@@ -593,6 +683,7 @@ Necesitaremos una estructura auxiliar que sea un vector. Por cada escena actualm
 Se puede ver esta estructura representada en la imagen superior. A la izquierda debajo de Ogre Backend.
 
 
+<!-- TOC --><a name="pipeline-de-generación-de-contenido"></a>
 # **Pipeline de generación de contenido** 
 En pipeline de generación de contenido el motor transforma los archivos externos del juego (mapas, prefabs, scripts y recursos) en entidades y componentes funcionales dentro de la escena.
 
