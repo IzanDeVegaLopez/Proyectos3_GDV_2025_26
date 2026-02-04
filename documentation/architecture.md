@@ -168,9 +168,14 @@ for i=0,10,1 do
 end
 ```
 
-## Creación de Blueprints
-Podremos crear blueprints desde lua creando funciones
+## Blueprints
+Los blueprints son plantillas para crear objetos complejos de forma sencilla.
 
+Normalmente son una descripción de una entidad y sus componentes asociados junto con los parametros que toman dichos componentes inicialmente.
+Algunos plantillas pueden recibir argumentos para provocar cambios mínimos en el producto final.
+
+### Creación de Blueprints
+#### En LUA
 Por ejemplo:
 ```lua
 function createEnemy(posX, posY){
@@ -185,13 +190,18 @@ Podríamos usar estas funciones desde cpp con el siguiente wrapper:
 ```cpp
 void callLuaFunc(string& functionName, parameters ...){
 	if (functionName in LUA is found and is function){
-		execute_function(parameters...)
+		execute_function(parameters...);
 	}else{
 		LogSystem::log("Error calling function functionName, errorCause");
 	}
 }
 ```
 Referencia https://www.saoe.net/blog/cpp-and-lua-call-function/
+
+#### En C++
+Basicamente es la misma idea que con LUA, crear funciones que creen las entidades con los componentes inicializados a los valores que sean y que posiblemente reciban ciertos parametros.
+
+Y con la facilidad de que solo tenemos que bindear una función de cpp a lua para poder llamarla cuantas veces sean necesarias.
 
 ## Interfaz de comunicación con el juego desde el motor
 La clase principal del juego deberá heredar de la clase abstracta **MotorProgram**.
