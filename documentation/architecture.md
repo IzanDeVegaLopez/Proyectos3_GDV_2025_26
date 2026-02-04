@@ -1,6 +1,5 @@
-## Indice
+# Indice
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
-   * [Indice](#indice)
 - [Estructura de la solución y proyectos (y repositorios de Git) ](#estructura-de-la-solución-y-proyectos-y-repositorios-de-git)
    * [Estructura de la solución en local:](#estructura-de-la-solución-en-local)
    * [Estructura de la solución por repositorios:](#estructura-de-la-solución-por-repositorios)
@@ -61,11 +60,9 @@
       + [Render3DSystem](#render3dsystem)
    * [Render de Objetos 3D](#render-de-objetos-3d)
       + [La Pila de Nodos de la Escena](#la-pila-de-nodos-de-la-escena)
-- [**Pipeline de generación de contenido** ](#pipeline-de-generación-de-contenido)
+- [Pipeline de generación de contenido ](#pipeline-de-generación-de-contenido)
 
 <!-- TOC end -->
-
-<!-- TOC --><a name="indice"></a>
 <!-- TOC --><a name="estructura-de-la-solución-y-proyectos-y-repositorios-de-git"></a>
 # Estructura de la solución y proyectos (y repositorios de Git) 
 <!-- TOC --><a name="estructura-de-la-solución-en-local"></a>
@@ -634,7 +631,7 @@ Se puede ver esta estructura representada en la imagen superior. A la izquierda 
 
 
 <!-- TOC --><a name="pipeline-de-generación-de-contenido"></a>
-# **Pipeline de generación de contenido** 
+# Pipeline de generación de contenido
 En pipeline de generación de contenido el motor transforma los archivos externos del juego (mapas, prefabs, scripts y recursos) en entidades y componentes funcionales dentro de la escena.
 
 El proceso será similar al siguiente:
