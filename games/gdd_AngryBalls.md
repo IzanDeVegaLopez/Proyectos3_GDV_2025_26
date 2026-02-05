@@ -28,23 +28,25 @@
    2.2. [Ciclo de juego](#22-Ciclo-de-juego)  
 
 3. [Mecánicas](#3-mecánicas)  
-   3.1. [Movimiento](#31-Movimiento)  
+   3.1. [Movimiento](#31-Movimiento)
+   3.2. [Disparos](#32-disparos)
 
-4. [Interfaz](#4-interfaz)  
+5. [Interfaz](#4-interfaz)  
    4.1. [Controles](#41-controles)  
    4.2. [Cámara](#42-cámara)  
    4.3. [HUD](#43-hud)  
    4.4. [Menús](#44-menús)  
 
-5. [Mundo del juego](#5-mundo-del-juego)  
+6. [Mundo del juego](#5-mundo-del-juego)  
    5.1. [Personajes](#51-personajes)  
-   5.2. [Niveles](#52-niveles)  
+   5.2. [Niveles](#52-niveles)
+   5.3. [Objetos del mundo](#53-objetos-del-mundo)
 
-6. [Experiencia de juego](#6-experiencia-de-juego)  
+7. [Experiencia de juego](#6-experiencia-de-juego)  
 
-7. [Estética](#7-estética)  
+8. [Estética](#7-estética)  
 
-8. [Referencias](#8-referencias)
+9. [Referencias](#8-referencias)
 
 
 ## 1. Resumen  
@@ -294,7 +296,7 @@ Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alej
 **Estética:**
 - Música 
 - SFX 
-- Paleta de colores <mg width="1587" height="2245" alt="paleta de color" src="https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Paleta_De_Color.png" />
+- Paleta de colores <img width="1587" height="2245" alt="paleta de color" src="https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Paleta_De_Color.png" />
 
 
 ## 8. Referencias  
