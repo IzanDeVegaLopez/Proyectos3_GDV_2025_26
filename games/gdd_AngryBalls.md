@@ -1,6 +1,4 @@
 # Angry Balls
-***Subtítulo Página Web*** 🌐 **[Página web del juego](https://www.youtube.com/watch?v=dQw4w9WgXcQ)**  
-
 
 ---
 # *Documento de diseño del juego*
@@ -44,27 +42,25 @@
 
 6. [Experiencia de juego](#6-experiencia-de-juego)  
 
-7. [Estética y contenido](#7-estética-y-contenido)  
+7. [Estética](#7-estética)  
 
-8. [Referencias](#8-referencias)  
-
-9. [Testing](#9-testing)  
+8. [Referencias](#8-referencias)
 
 
 ## 1. Resumen  
 
 ### 1.1. Descripción  
-Eres un caza demonios que busca capturar todos los AngryBalls posibles (Los "Angryballs son la puntuación del jugador, aunque también se utilizarán para otras acciones descritas más adelante). 
-Para ello destroza a los enemigos con tu ametralladora y trata de evitar que te maten durante la mayor cantidad de oleadas.
+En este juego, juegas desde el punto de vista (FPS) de un caza demonios que busca capturar todos los AngryBalls posibles. Los "Angryballs" son la puntuación, fragmentos de alma: cada demonio derrotado es convertido en "AngryBalls", y cuanto más fuerte el enemigo más puntuación te dará. Para ello, destroza a los enemigos con tu ametralladora y trata de evitar que te maten durante la mayor cantidad de oleadas. En tu jornada, tendrás desafíos cada vez mayores. Contarás con la ayuda de una entidad carismática que te pide las "AngryBalls" en cambio de ventajas y también de "HappyBalls" (ventajas momentáneas en una oleada).
+Gestiona tus recursos y compra mejoras para lograr más puntos.
 
 ### 1.2. Género  
-FPS arcade
+Fast-paced FPS Arcade
 
 ### 1.3. Público objetivo
 Adolescente y jovén adulto
 
 ### 1.4. Ambientación y tono  
-La acción se desarrolla en diferentes espacios abiertos como pueden ser una plaza de una ciudad desolada o un terreno baldío entre tierras. 
+La acción se desarrolla en diferentes espacios abiertos, pero delimitados, como una plaza de una ciudad desolada o un terreno baldío entre tierras. 
 Se busca un tono oscuro que mezcle un mundo desértico con los demonios a los que hay que capturar.
 
 ### 1.5. Características principales  
@@ -88,54 +84,67 @@ Se busca un tono oscuro que mezcle un mundo desértico con los demonios a los qu
    - Mejora de las habilidades del jugador en la estrategia
 
 ## 2. Jugabilidad  
-Consiste en una vista en primera persona con una mirilla para apuntar y disparar. Hay que moverse por el escenario para matar a los enemigos disparandoles y evitar que te peguen.
+Consiste en una vista en primera persona con una mirilla para apuntar y disparar. Hay que moverse por el escenario para matar a los enemigos disparándoles y evitar que te peguen.
 Cuando termina una oleada empezará la siguiente, habiendo en determinados momentos oleadas especiales de más calma o de más tensión (Momentos de comprar y momentos de batallas contra minijefes)
 
 ### 2.1. Objetivo del juego   
 Conseguir la mayor cantidad de AngryBalls posibles.
 
 ### 2.2. Ciclo de juego
-//insertar ruta absoluta de la imagen en el proyecto
-![Diagrama de flujo](https://github.com/organizacion/repo/blob/main/docs/img/imagen.jpg)
+```mermaid
+--- 
+title: Ciclo de Juego 
+--- 
+stateDiagram-v2
 
-Una partida estándar tendría el siguiente ciclo:
-1. Oleada estándar
-2. Tienda
-3. Jefe
+Oleada(3x) --> Tienda
+Tienda --> Jefe
+Jefe --> Oleada(3x)
+
+```
+
+Una partida tendrá el siguiente ciclo que se repite infinitamente:
+1. Oleada estándar 1
+2. Oleada estándar 2
+3. Oleada estándar 3
+4. Tienda
+5. Oleada jefe
+
+El ciclo termina si el jugador muere.
 
 *Oleada estándar:*
-Oleada compuesta por enemigos normales. 
-Incrementarán su dificultad de forma lineal teniendo en cuenta los parámetros descritos anteriormente.
-Este tipo de oleadas se darán como mínimo 3 veces seguidas antes de pasar a la siguiente.
+Oleada compuesta por enemigos normales. Incrementarán su dificultad de forma lineal teniendo en cuenta el número de oleada.
 
 *Tienda:*
-Aparece aleatoriamente entre oleadas (Minimo cada 3 oleadas máximo cada 7) y permite comprar vidas a cambio de Angryballs.
+Una entidad con mucha personalidad surgirá en el mapa para ofrecer un contrato. Aparece aleatoriamente entre oleadas (Minimo cada 3 oleadas máximo cada 7) y permite comprar vidas a cambio de Angryballs. 
 No tiene enemigos y permite cambiar las tornas de la partida.
 El jugador debe gestionar si le compensa más perder parte de su puntuación para conseguir vidas extras o continuar con los recursos que tiene en ese momento.
 El jugador puede tener como máximo 3 vidas a la vez.
+La tienda también permite comprar ventajas como mejoras de arma.
+Contexto y lore pueden venir del diálogo con este personaje.
 
 *Jefe:*
-La oleada de jefe tiene prioridad frente al resto de oleadas, si tocan dos oleadas distintas se colocará primero la del jefe y la otra con la que competía a continuación.
-Estas fases aparecerán cada 5 oleadas y el jefe debe tener una dificultad ligeramente mayor a las oleadas estándar anteriores.
+La oleada de jefe aparecerá cada 3 oleadas y tendrá una dificultad ligeramente mayor a las oleadas anteriores por tener un enemigo especial de tipo jefe además de enemigos estándar.
+Más información de los enemigos en el apartado enemigos.
 
 ## 3. Mecánicas  
 
 ### 3.1. Movimiento
 
 **Parámetros:**  
--  Posición (x, y) (ignoramos la altura)
--  Velocidad
-El jugador y los enemigos podrán moverse por el plano (x, y) con libertad.
+-  Posición (x, y, z) (z solo para enemigos voladores)
+-  Velocidad (x, y, z) (z solo para enemigos voladores)
+El jugador y los enemigos podrán moverse por el entorno con libertad dentro de los límites del mapa. 
 
 ### 3.2. Disparo
 
 **Parámetros:**  
 -  Posición (x, y)
--  Velocidad
--  Dirección
+-  Cadencia
+-  Velocidad de proyectil
+-  Orientación en los 3 grados de libertad
 -  Origen (Si es un disparo enemigo o del jugador)
-El jugador y los enemigos podrán disparar un máximo de 3 balas a la vez, es decir, cada personaje solo podrá "tener" 5 balas en pantalla.
-Si una bala enemiga colisiona con el jugador le quitará parte de la vida y lo mismo sucederá a la inversa con las balas del jugador y los enemigos.
+Si un proyectil enemigo colisiona con el jugador le quitará una vida y lo mismo sucederá a la inversa con las balas del jugador y los enemigos.
 
 El jugador podrá disparar 2 tipos diferentes de balas:
 - Munición normal: munición que se va agotando y hay que ir recogiendo.
@@ -182,8 +191,7 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
 ![Boceto Menu fin](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_Menu%CC%81_Fin.png)
 
 - **Menú de Tienda**
-    - Muestra objetos a comprar
-    - Precio de los objetos
+    - Vidas, mejoras y sus precios
     - Estado del jugador (Vida actual y munición restante)
     - Numero de angryballs
 
@@ -212,17 +220,38 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
   - Velocidad: Velocidad de movimiento del jugador.
 
 - **Enemigos:**
-  //imagenes
-  <img src="https://github.com/ruta.png" alt="Enemigo 1" />
 
-  Los enemigos tendrán los siguientes parámetros:
-  - Vida: Cuando esta llegue a 0 se eliminarán
-  - Angryballs: Numero de angryballs que da al jugador al morir.
-  - Daño: Daño que hacen los enemigos al golpear al jugador.
+	Los enemigos tendrán los siguientes parámetros:
+	- Vida: Cuando esta llegue a 0 se eliminarán
+	- Angryballs: Numero de angryballs que da al jugador al morir.
+	- Daño: Daño que hacen los enemigos al golpear al jugador.
+
+	**Características**
+	Estándar:
+	 - Terrestres: 
+		-movimiento: camina por el suelo hacia el jugador.
+		-ataque: puede disparar proyectiles. El contacto directo con este enemigo le quita una vida al jugador.
+	 - Voladores:
+		-vuela con fluctuaciones de altura (z) y va hacia el jugador.
+		-ataque: cuerpo a cuerpo. El contacto directo con este enemigo le quita una vida al jugador.
+	Jefe: 
+	- en el medio del mapa, estático, dispara proyectiles en todas las direcciones
+	- genera enemigos estándar
+
+	**Modificadores en función de la oleada**
+    Enemigos estándar:
+	- (+) vida - más daño para morir
+	- (+) velocidad - van a por el jugador más rápidamente
+	- (-) tamaño - más difícil de acertar
+    Jefes:
+	- (+) vida - más daño para morir
+	- (-) tamaño - más difícil de acertar
 
 ### 5.2. Niveles 
-- **Nivel 1:**
-- **Nivel 2:**
+**Oleada normal:**
+- Mapa de tamaño delimitado que puede disminuir, aumentando la dificultad, conforme avanzan las oleadas.
+**Oleada jefe:**
+- Mapa distinto del de oleada normal. Tiene coberturas no traspasables por ningún objeto o entidad que permiten evitar ataque de proyectiles del Jefe o de enemigos estándar.
 
 ### 5.3. Objetos del mundo 
 - **Coberturas:**
@@ -231,7 +260,7 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
    **Cobertura parcial:** Existe un 50% de probabilidad de que la bala golpeé la cobertura o la sobrepase.
    Estas aparecerán unicamente en las oleadas de jefes y permitirá cubrirse de sus proyectiles.
   
-- **Objetos:**
+- **Objetos (o "HappyBalls"):**
    Al matar a enemigos estos pueden soltarte un objeto, teniendo cada tipo de objeto una probabilidad distinta de aparecer. Los objetos pueden ser:
   - Vida: Recupera una vida, se coge automaticamente no se almacena para usarse. Probabilidad de aparición 5%.
   - Mejora de velocidad: Aumenta en un 25% la velocidad del personaje durante la oleada. Probabilidad de aparición 20%.
@@ -240,6 +269,7 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
 
   El jugador solo podrá mantener un objeto a la vez, si pasa por un objeto diferente este se sustituirá por el que tenía guardado.
   Los objetos permanecerán en el suelo 1 min, si no se recogen pasado ese tiempo desaparecerán.
+  Se llaman "HappyBalls", porque este mundo no es maniqueísta y hasta los demonios pueden tener algo de bueno que lo dejan al morir.
 
 ## 6. Experiencia de juego  
 **Dinámicas Buscadas**
@@ -257,18 +287,19 @@ Entras a La Torre y te encuentras una sala, matas a todos los enemigos (mientras
 
 Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alejarse.
 
-## 7. Estética y contenido  
+## 7. Estética 
+
+<img width="1587" height="2245" alt="moodboard" src="https://github.com/user-attachments/assets/0511d299-066b-4a8a-a86a-aa13004e18ec" />
+
 **Estética:**
 - Música 
 - SFX 
 - Paleta de colores //Ahora mismo no se poner una imagen pero tengo la paleta
 
-**Contenido:**  
--
--
-  
-
 ## 8. Referencias  
-
-
-##  9. Testing
+- Devil Daggers 
+- Doom
+- Crossbow: Bloodnight 
+- Devil May Cry 
+- Bloodborne 
+- Hades

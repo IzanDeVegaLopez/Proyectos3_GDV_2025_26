@@ -110,12 +110,16 @@ Usaremos SDL2 para manejar el input de teclado y ratón.
 ### Fmod
 Usaremos Fmod para efectos de sonido y música.
 <!-- TOC --><a name="lua-sol3"></a>
-### Lua + Sol3
+### Lua + SWIG
 Usaremos Lua para crear la escena y describir los objetos y componentes en su interior. Los scripts de LUA serán capaces de llamar a entidades de cpp.
 
 - **Iteración rápida:** Modificar la disposición del nivel sin recompilar C++.
 - **Generación procedural:** Uso de bucles y condicionales simples en la carga (ej: crear 100 árboles en fila con un bucle `for` en lugar de definir 100 líneas de texto).
-- **Binding sencillo:** Sol3 expondrá factorías de entidades de C++ a Lua (ej: `createEntity("Enemy")`).
+- **Binding sencillo:** SWIG expondrá factorías de entidades de C++ a Lua, y permitirá definir estructuras de datos de componentes en LUA para recibirlos en cpp sin mayor problema.
+
+#### SWIG
+https://www.swig.org/Doc1.3/Lua.html#Lua_nn1
+SWIG nos permite copiar y pegar bits. Y que cpp y LUA tengan la misma estructura de cada componente o clase que necesitemos poder compartir entre ambos 
 
 <!-- TOC --><a name="creación-de-entidades-y-componentes-desde-lua"></a>
 #### Creación de Entidades y Componentes desde LUA
@@ -129,7 +133,7 @@ extern "C"
 }
 ```
 
-Después querremos las funciones con las que comunicarnos con LUA, estas serán:
+Después querremos las funciones con las que comunicarnos con LUA, una idea de como podrían lucir estas es:
 ```cpp
 int addEntity(lua_State* L){
 	//createNewEntity devuelve el id de la nueva entidad creada
@@ -337,40 +341,84 @@ Se recomienda que al hacer el juego el usuario defina sus propios sistemas indep
 ## Input
 La gestión de entrada se realizará mediante un wrapper sobre **SDL2**. El sistema almacenará el estado de los dispositivos (teclado y ratón) del frame actual y del frame anterior para poder detectar transiciones (pulsaciones nuevas "down", liberaciones "up" y movimiento en caso del ratón).
 
-<!-- TOC --><a name="implementación-interna"></a>
 ### Implementación interna
-El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior. después el estado actual se actualizará selectivamente con los eventos de teclado que se reciban ese frame.
+El `InputManager` mantendrá dos copias de los estados: `CurrentState` y `LastState`. Al inicio de cada frame (antes de procesar la lógica del juego), se copiará el estado actual al estado anterior.
 
-<!-- TOC --><a name="teclado"></a>
+A diferencia del ratón, el teclado **no se sondeará por snapshot**, sino que **interceptará los eventos** de SDL (`SDL_PollEvent`) para actualizar selectivamente los bits correspondientes. Esto optimiza el uso de memoria y evita lecturas redundantes.
+
 #### Teclado
-SDL proporciona el estado de todo el teclado mediante `SDL_GetKeyboardState`. Usaremos `SDL_Scancode` (posición física) para indexar un array de tamaño fijo (256). Aunque `SDL_NUM_SCANCODES` sea 512 podemos reducir la escala a la mitad, viendo que todos los inputs utilizados dentro de videojuegos caen en las primeras 256 claves.
+Para gestionar el teclado usaremos `std::bitset`, una estructura optimizada que consume 1 bit por tecla. Usaremos `SDL_Scancode` (posición física) para indexar este set.
+Hemos limitado el tamaño del buffer a **256**, asumiendo que todos los inputs relevantes para videojuegos (WASD, flechas, espacio, números, teclas F1-F12) caen dentro de este rango inicial, lo que reduce drásticamente el consumo de memoria respecto al array completo de 512.
 
 **Justificación: Scancode vs Keycode**
 Se elige `SDL_Scancode` frente a `SDL_Keycode` por dos motivos principales:
 1.  **Independencia del Layout (Layout Agnostic):** El Scancode referencia la ubicación física de la tecla en el hardware, independientemente del idioma configurado en el sistema operativo. Esto garantiza que los controles estándar de movimiento (como **WASD**) mantengan la misma posición ergonómica para el jugador, incluso si utiliza un teclado con distribución AZERTY o Dvorak.
-2.  **Acceso Directo a Memoria:** La función `SDL_GetKeyboardState` devuelve un puntero a un array interno de SDL indexado nativamente por Scancodes. Usar Keycodes (que representan el carácter 'A', 'B', etc.) requeriría realizar una conversión o "mapeo" adicional en cada consulta, añadiendo una sobrecarga innecesaria.
+2.  **Acceso Directo a Memoria:** Al usar Scancodes como índices directos para nuestro bitset, obtenemos acceso O(1) sin necesidad de mapas de conversión ni búsquedas.
 
-<!-- TOC --><a name="ratón"></a>
 #### Ratón
 Para el ratón gestionaremos dos tipos de datos:
 1.  **Botones:** Un array de 5 booleanos/enteros (Izquierdo, Central, Derecho, X1, X2).
 2.  **Posición:** Un par de coordenadas (X, Y) para saber dónde está el cursor y cuánto se ha movido (Delta).
 
-<!-- TOC --><a name="estructura-de-datos"></a>
-### Estructura de Datos
-La clase `InputManager` contendrá:
-```cpp
-// Teclado
-std::array<Uint8, SDL_NUM_SCANCODES> kbState;      // Estado actual
-std::array<Uint8, SDL_NUM_SCANCODES> kbLastBState;  // Estado frame anterior
+### Estructura de Datos y Lógica
+La clase `InputManager` implementará la siguiente lógica basada en bitsets y eventos:
 
-// Ratón
-std::array<Uint8, 5> mouseButtons;         // Estado actual botones
-std::array<Uint8, 5> mouseLastButtons;     // Estado frame anterior botones
-Vector2 mousePos;                          // Posición actual (X,Y)
-Vector2 mouseLastPos;                      // Posición frame anterior (X,Y)
+```cpp
+// Estructura para el almacenamiento optimizado
+struct input_storage {
+    std::bitset<256> last_frame;
+    std::bitset<256> current_frame;
+};
+
+// --- Ratón (Mantenemos la estructura auxiliar) ---
+std::array<Uint8, 5> mouseButtons;
+std::array<Uint8, 5> mouseLastButtons;
+Vector2 mousePos;
+Vector2 mouseLastPos;
+
+// --- Lógica de Actualización ---
+void updateInput() {
+    // 1. Copiar estado actual al anterior (Memoria eficiente)
+    // Al ser bitsets, la asignación es muy rápida
+    last_frame = current_frame; 
+    mouseLastButtons = mouseButtons;
+    mouseLastPos = mousePos;
+
+    SDL_Event event;
+    // 2. Bucle de eventos (Polling)
+    while( SDL_PollEvent( &event ) ) {
+        // Filtrado de eventos de teclado
+        if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+            // Protección de rango para el bitset de 256
+            if (event.key.keysym.scancode < 256) {
+                current_frame[event.key.keysym.scancode] = (event.type == SDL_KEYDOWN);
+            }
+        }
+        // ... (Gestión de otros eventos como ratón o cerrar ventana)
+    }
+}
+
+// --- Métodos de Acceso ---
+
+bool getKeyState(SDL_Scancode key) {
+    if (key >= 256) return false;
+    return current_frame[key];
+}
+
+bool getKeyDown(SDL_Scancode key) {
+    if (key >= 256) return false;
+    // True si está pulsada ahora Y NO estaba pulsada antes
+    return current_frame[key] && !last_frame[key];
+}
+
+bool getKeyUp(SDL_Scancode key) {
+    if (key >= 256) return false;
+    // True si NO está pulsada ahora Y SÍ estaba pulsada antes
+    return !current_frame[key] && last_frame[key];
+}
+
 ```
-Aclaraciones: El Uint8 devuelto es 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
+Aclaraciones: 1 es pulsado y 0 es no pulsado. Y tamaño 5 de raton lo pusimos para soportar los botones estándar: Izquierdo, Central, Derecho, y los botones laterales X1 y X2 (comunes en ratones gaming).
 
 <!-- TOC --><a name="estructura-de-las-clases"></a>
 # Estructura de las clases 
@@ -660,3 +708,158 @@ Cada componente es creado y almacenado en el ComponentManager utilizando estruct
 
 D. Incorporación a la escena y ejecución
 Una vez completada la carga, las entidades pasan a formar parte de la escena activa y pueden ser procesadas por los distintos sistemas del motor durante el bucle principal.
+
+1. Resumen de Recursos
+	Módulo	Recurso	Herramienta	AssetsRaw	AssetsBuilt
+	Render (OGRE)	Modelos 3D	Blender	.fbx	.mesh
+	Render (OGRE)	Texturas	GIMP / Photoshop	.png	.dds
+	Render (OGRE)	Materiales	Editor de texto	.material	.material
+	Físicas	Colliders	Editor de texto (LUA)	.lua	.collider
+	Input (SDL)	Mappings	Editor de texto (LUA)	.lua	.input
+	Scripting (LUA)	Gameplay / IA	Editor de texto	.lua	.luac
+	Audio (FMOD)	Sonido / Música	Audacity / LMMS	.wav	.ogg
+
+2. Pipeline por Tipo de Recurso
+	2.1 Modelos 3D (Render - OGRE)
+   
+		Herramienta: Blender
+		AssetsRaw: .fbx
+		
+		Proceso
+		
+		Creación del modelo en Blender
+		
+		Exportación a formato .fbx
+		
+		El AssetBuilder convierte .fbx a .mesh
+		El motor carga la malla mediante OGRE
+		
+		AssetsBuilt: .mesh
+
+	2.2 Texturas (Render - OGRE)
+	
+		Herramienta: 
+		AssetsRaw: .png
+		
+		Proceso
+		
+		Creación de la textura
+		
+		Exportación a .png
+		
+		El AssetBuilder convierte a .dds y optimiza la textura
+		
+		OGRE carga la textura a través del sistema de materiales
+		
+		AssetsBuilt: .dds
+	
+	2.3 Materiales (Render - OGRE)
+	
+		Herramienta: Editor de texto
+		AssetsRaw: .material
+		
+		Proceso
+		
+		Definición del material mediante scripts OGRE
+		
+		Validación por el AssetBuilder
+		
+		Copia al directorio de AssetsBuilt
+		
+		AssetsBuilt: .material
+	
+	2.4 Colliders (Sistema de Físicas)
+	
+		Herramienta: Editor de texto (LUA)
+		AssetsRaw: .lua
+		
+		Ejemplo:
+		
+		return {
+		  type = "box",
+		  width = 1.0,
+		  height = 2.0,
+		  depth = 1.0
+		}
+		Proceso
+		
+		Definición de datos de colisión en LUA
+		
+		Validación del script por el AssetBuilder
+		
+		Conversión a formato binario .collider
+		
+		Carga por el sistema de físicas
+		
+		AssetsBuilt: .collider
+	
+	2.5 Configuración de Input (SDL)
+	
+		Herramienta: Editor de texto (LUA)
+		AssetsRaw: .lua
+		
+		Ejemplo:
+		
+		return {
+		  jump = "SPACE",
+		  move_left = "A"
+		}
+		Proceso
+		
+		Definición de mappings en LUA
+		
+		Validación por el AssetBuilder
+		
+		Conversión a formato interno .input
+		
+		Carga por el sistema de input basado en SDL
+		
+		AssetsBuilt: .input
+	
+	2.6 Scripts de Gameplay (LUA)
+	
+		Herramienta: Editor de texto
+		AssetsRaw: .lua
+		
+		Proceso
+		
+		Escritura de scripts de gameplay
+		
+		Validación sintáctica
+		
+		Compilación a bytecode LUA (.luac)
+		
+		Carga por el sistema de scripting
+		
+		AssetsBuilt: .luac
+	
+	2.7 Audio (FMOD)
+	
+		Herramienta: Audacity / LMMS
+		AssetsRaw: .wav
+		
+		Proceso
+		
+		Creación de sonido o música
+		
+		Exportación a .wav
+		
+		Conversión a .ogg mediante AssetBuilder
+		
+		Carga por FMOD
+		
+		AssetsBuilt: .ogg
+
+5. AssetBuilder
+
+	El AssetBuilder es una herramienta propia desarrollada como parte del proyecto. Su función es automatizar el procesamiento de recursos.
+	
+	Responsabilidades
+	
+	Validación de archivos
+	
+	Conversión de formatos
+	
+	Optimización básica
+	
+	Generación de AssetsBuilt
