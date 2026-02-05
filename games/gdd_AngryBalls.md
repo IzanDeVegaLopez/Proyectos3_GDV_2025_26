@@ -50,7 +50,7 @@
 ## 1. Resumen  
 
 ### 1.1. Descripción  
-En este juego, juegas desde el punto de vista (FPS) de un caza demonios que busca capturar todos los AngryBalls posibles. Los "Angryballs" son la puntuación, fragmentos de alma: cada demonio derrotado es convertido en "AngryBalls", y cuanto más fuerte el enemigo más puntuación te dará. Para ello, destroza a los enemigos con tu ametralladora y trata de evitar que te maten durante la mayor cantidad de oleadas. En tu jornada, tendrás desafíos cada vez mayores. Contarás con la ayuda de una entidad carismática que te pide las "AngryBalls" en cambio de ventajas y también de "HappyBalls" (ventajas momentáneas en una oleada).
+En este juego, encarnas el punto de vista (FPS) de un caza demonios que busca capturar todos los AngryBalls posibles. Los "Angryballs" son la puntuación, fragmentos de alma: cada demonio derrotado es convertido en "AngryBalls", y cuanto más fuerte el enemigo más puntuación te dará. Para ello, destroza a los enemigos con tu ametralladora y trata de evitar que te maten durante la mayor cantidad de oleadas. En tu jornada, tendrás desafíos cada vez mayores. Contarás con la ayuda de una entidad carismática que te pide las "AngryBalls" en cambio de ventajas y también de "HappyBalls" (ventajas momentáneas en una oleada).
 Gestiona tus recursos y compra mejoras para lograr más puntos.
 
 ### 1.2. Género  
@@ -116,7 +116,7 @@ El ciclo termina si el jugador muere.
 Oleada compuesta por enemigos normales. Incrementarán su dificultad de forma lineal teniendo en cuenta el número de oleada.
 
 *Tienda:*
-Una entidad con mucha personalidad surgirá en el mapa para ofrecer un contrato. Aparece aleatoriamente entre oleadas (Minimo cada 3 oleadas máximo cada 7) y permite comprar vidas a cambio de Angryballs. 
+Una entidad con mucha personalidad surgirá en el mapa para ofrecer un contrato. Aparece después de las 3 oleadas estándar y permite comprar vidas a cambio de Angryballs. 
 No tiene enemigos y permite cambiar las tornas de la partida.
 El jugador debe gestionar si le compensa más perder parte de su puntuación para conseguir vidas extras o continuar con los recursos que tiene en ese momento.
 El jugador puede tener como máximo 3 vidas a la vez.
@@ -124,7 +124,7 @@ La tienda también permite comprar ventajas como mejoras de arma.
 Contexto y lore pueden venir del diálogo con este personaje.
 
 *Jefe:*
-La oleada de jefe aparecerá cada 3 oleadas y tendrá una dificultad ligeramente mayor a las oleadas anteriores por tener un enemigo especial de tipo jefe además de enemigos estándar.
+La oleada de jefe aparecerá cada 3 oleadas después de la tienda y tendrá una dificultad ligeramente mayor a las oleadas anteriores por tener un enemigo especial de tipo jefe además de enemigos estándar.
 Más información de los enemigos en el apartado enemigos.
 
 ## 3. Mecánicas  
@@ -151,7 +151,6 @@ El jugador podrá disparar 2 tipos diferentes de balas:
 - AngryBalls: Hacen el doble de daño que las balas normales pero pierdes la puntuación que vas gastando.
 
 Las balas solo se destruirán cuando chocan contra una cobertura o cuando salen del mapa, matarán a todos los enemigos de la fila.
-
 
 ## 4. Interfaz  
 
@@ -204,17 +203,16 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
   - Máxima oleada que se ha alcanzado
   - Enemigos simples matados
   - Jefes derrotados
+  - Volver al menu de inicio
     
 ![Boceto Estadísticas](https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Boceto_menu%CC%81_estadi%CC%81sticas.png)
 
 ## 5. Mundo del juego  
 
 ### 5.1. Personajes  
-- **Jugador:** 
-  //imagenes
-  <img src="https://github.com/ruta.png" alt="Jugador 1" />
-
-  El jugador tendrá los diferentes parámetros:
+- **Jugador:**
+- 
+  El jugador tendrá los siguientes parámetros:
   - Vida: Al comenzar tendrá 3 vidas, por cada golpe pierde 1 vida y estas podrán recuperarse en la tienda.
   - Munición: Balas que tiene el jugador, cuando llegue a 0 no podrá disparar más.
   - Velocidad: Velocidad de movimiento del jugador.
@@ -229,14 +227,16 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
 	**Características**
 	Estándar:
 	 - Terrestres: 
-		-movimiento: camina por el suelo hacia el jugador.
-		-ataque: puede disparar proyectiles. El contacto directo con este enemigo le quita una vida al jugador.
+	    - Movimiento: Camina por el suelo hacia el jugador.
+		- Ataque: Puede disparar proyectiles. El contacto directo con este enemigo le quita una vida al jugador.
 	 - Voladores:
-		-vuela con fluctuaciones de altura (z) y va hacia el jugador.
-		-ataque: cuerpo a cuerpo. El contacto directo con este enemigo le quita una vida al jugador.
-	Jefe: 
-	- en el medio del mapa, estático, dispara proyectiles en todas las direcciones
-	- genera enemigos estándar
+		- Movimiento: Vuela con fluctuaciones de altura (z) y va hacia el jugador.
+		- Ataque: Cuerpo a cuerpo. El contacto directo con este enemigo le quita una vida al jugador.
+	Jefe:
+	 Hay 3 tipos de jefes posibles
+		- Colocado en el medio de forma estática y disparando proyectiles en todas las direcciones.
+  		- Jefe que se va quedando estático en diferentes zonas y que genera enemigos estándar.
+    	- Jefe colocado en el medio del mapa de forma estática que dispara en tu dirección. 
 
 	**Modificadores en función de la oleada**
     Enemigos estándar:
@@ -256,16 +256,16 @@ Si el jugador tiene algún objeto a utilizar se mostrará en la esquina inferior
 ### 5.3. Objetos del mundo 
 - **Coberturas:**
    Existen dos tipos de cobertura: la cobertura completa y la cobertura parcial.
-   **Cobertura completa:** Las balas de los enemigos no podrán darte de ninguna manera.
-   **Cobertura parcial:** Existe un 50% de probabilidad de que la bala golpeé la cobertura o la sobrepase.
+   *Cobertura completa:* Las balas de los enemigos no podrán darte de ninguna manera.
+   *Cobertura parcial:* Existe un 50% de probabilidad de que la bala golpeé la cobertura o la sobrepase.
    Estas aparecerán unicamente en las oleadas de jefes y permitirá cubrirse de sus proyectiles.
   
 - **Objetos (o "HappyBalls"):**
    Al matar a enemigos estos pueden soltarte un objeto, teniendo cada tipo de objeto una probabilidad distinta de aparecer. Los objetos pueden ser:
-  - Vida: Recupera una vida, se coge automaticamente no se almacena para usarse. Probabilidad de aparición 5%.
-  - Mejora de velocidad: Aumenta en un 25% la velocidad del personaje durante la oleada. Probabilidad de aparición 20%.
-  - Munición: Da 20 balas extra, se coge automaticamente este objeto no se almacena para usarse. Probabilidad de aparición del 65%.
-  - Munición infinita: Da duración infinita durante 5 min. Probabilidad de aparición 10%.
+  - *Vida:* Recupera una vida, se coge automaticamente no se almacena para usarse. Probabilidad de aparición 5%.
+  - *Mejora de velocidad:* Aumenta en un 25% la velocidad del personaje durante la oleada. Probabilidad de aparición 20%.
+  - *Munición:* Da 20 balas extra, se coge automaticamente este objeto no se almacena para usarse. Probabilidad de aparición del 65%.
+  - *Munición infinita:* Da duración infinita durante 5 min. Probabilidad de aparición 10%.
 
   El jugador solo podrá mantener un objeto a la vez, si pasa por un objeto diferente este se sustituirá por el que tenía guardado.
   Los objetos permanecerán en el suelo 1 min, si no se recogen pasado ese tiempo desaparecerán.
@@ -283,7 +283,7 @@ Para que la dificultad del juego vaya en aumento por oleada se incrementarán lo
 
 
 **Descripción de Partida**
-Entras a La Torre y te encuentras una sala, matas a todos los enemigos (mientras puedes ir buscando cofres por la sala), al matarlos a todos se desbloquen las escaleras y aparece un mini jefe opcional, puedes o pasar de nivel o enfrentarte a él por más angryballs. En la sala final se encontrará un jefe al que se debe derrotar para finalizar el nivel.
+Te encuentras en el mapa correspondiente y van apareciendo los diferentes enemigos, mientras matas a los enemigos estos irán soltandote tanto AngryBalls como HappyBalls. Cuando derrotas a todos los enemigos de una oleada empezará automaticamente la siguiente. Después de 3 oleadas de enemigos tendrás el evento de tienda donde podrás conversar con nuestro carismático tendero y mejorarte de cara al jefe y a las 3 oleadas siguientes hasta que le vuelvas a ver. Este ciclo continuará hasta que el jugador muera.
 
 Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alejarse.
 
@@ -294,7 +294,8 @@ Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alej
 **Estética:**
 - Música 
 - SFX 
-- Paleta de colores //Ahora mismo no se poner una imagen pero tengo la paleta
+- Paleta de colores <mg width="1587" height="2245" alt="paleta de color" src="https://github.com/IzanDeVegaLopez/Proyectos3_GDV_2025_26/blob/main/games/AngryballsImages/Paleta_De_Color.png" />
+
 
 ## 8. Referencias  
 - Devil Daggers 
