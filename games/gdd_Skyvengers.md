@@ -157,7 +157,11 @@ Aviones con diferente gama cromática.
   //imágenes próximamente
 
 ### 5.2. Niveles  
-Circuitos cerrados, con obstáculos y diferentes caminos a superar.
+Circuitos cerrados, con obstáculos y diferentes caminos a superar. Como inspiración tomaremos los circuitos de la saga Mario Kart y de la Fórmula 1.
+
+<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/InspiracionMarioKart.webp" alt="Circuito MK" />
+
+<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/InspirationLevels.png" alt="Circuitos F1 2025" />
 
 ## 6. Experiencia de juego  
 **Dinámicas Buscadas**
@@ -189,6 +193,9 @@ Los aviones comienzan cada carrera desde la línea de salida y meta. A lo largo 
 - Wii Sports Resort (2009), los juegos relacionados a Vuelo Turístico y Combate en Vuelo
 - Avicii Gravity HD (2013)
 - Alan Walker – The Aviation Game (2019)
+- Saga Mario Kart (Nintendo)
+- Fórmula 1
+
 
 ##  9. Testing
 
