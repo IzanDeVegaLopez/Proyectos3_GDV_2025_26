@@ -288,6 +288,9 @@ Entras a La Torre y te encuentras una sala, matas a todos los enemigos (mientras
 Cuando el jugador es golpeado tendrá 10s de inmunidad para poder moverse y alejarse.
 
 ## 7. Estética 
+
+<img width="1587" height="2245" alt="moodboard" src="https://github.com/user-attachments/assets/0511d299-066b-4a8a-a86a-aa13004e18ec" />
+
 **Estética:**
 - Música 
 - SFX 
