@@ -710,13 +710,45 @@ D. Incorporación a la escena y ejecución
 Una vez completada la carga, las entidades pasan a formar parte de la escena activa y pueden ser procesadas por los distintos sistemas del motor durante el bucle principal.
 
 1. Resumen de Recursos
-	Módulo		Recurso		Herramienta			AssetsRaw						AssetsBuilt
-	Render 		(OGRE)		Modelos 3D			Blender	.fbx					.mesh
-	Render 		(OGRE)		Texturas			Editor de imagen .png			.dds
-	Render 		(OGRE)		Materiales			Editor de texto	.material		.material
-	Físicas		(LUA)		Colliders			Editor de texto (LUA) .lua		.collider
-	Scripting 	(LUA)		Carga de Datos		Editor de texto	(LUA) .lua		.luac
-	Audio 		(FMOD)		Sonido / Música		Audacity / LMMS	.wav			.ogg
+	```mermaid
+	flowchart TD
+	
+	    %% Fila 1 - Modelos 3D
+	    A1["Render (OGRE)"] --> B1["Modelos 3D"]
+	    B1 --> C1["Blender"]
+	    C1 --> D1[".fbx"]
+	    D1 --> E1[".mesh"]
+	
+	    %% Fila 2 - Texturas
+	    A2["Render (OGRE)"] --> B2["Texturas"]
+	    B2 --> C2["Editor de imagen"]
+	    C2 --> D2[".png"]
+	    D2 --> E2[".dds"]
+	
+	    %% Fila 3 - Materiales
+	    A3["Render (OGRE)"] --> B3["Materiales"]
+	    B3 --> C3["Editor de texto"]
+	    C3 --> D3[".material"]
+	    D3 --> E3[".material"]
+	
+	    %% Fila 4 - Colliders
+	    A4["Físicas (LUA)"] --> B4["Colliders"]
+	    B4 --> C4["Editor de texto (LUA)"]
+	    C4 --> D4[".lua"]
+	    D4 --> E4[".collider"]
+	
+	    %% Fila 5 - Carga de Datos (Scripts)
+	    A5["Scripting (LUA)"] --> B5["Carga de Datos"]
+	    B5 --> C5["Editor de texto (LUA)"]
+	    C5 --> D5[".lua"]
+	    D5 --> E5[".luac"]
+	
+	    %% Fila 6 - Audio
+	    A6["Audio (FMOD)"] --> B6["Sonido / Música"]
+	    B6 --> C6["Audacity / LMMS"]
+	    C6 --> D6[".wav"]
+	    D6 --> E6[".ogg"]
+	```
 
 3. Pipeline por Tipo de Recurso
 	2.1 Modelos 3D (Render - OGRE)
