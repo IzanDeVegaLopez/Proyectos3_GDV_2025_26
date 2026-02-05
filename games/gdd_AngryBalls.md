@@ -28,7 +28,7 @@
    2.2. [Ciclo de juego](#22-Ciclo-de-juego)  
 
 3. [Mecánicas](#3-mecánicas)  
-   3.1. [Movimiento](#31-Movimiento)
+   3.1. [Movimiento](#31-movimiento)  
    3.2. [Disparos](#32-disparos)
 
 5. [Interfaz](#4-interfaz)  
@@ -39,7 +39,7 @@
 
 6. [Mundo del juego](#5-mundo-del-juego)  
    5.1. [Personajes](#51-personajes)  
-   5.2. [Niveles](#52-niveles)
+   5.2. [Niveles](#52-niveles)  
    5.3. [Objetos del mundo](#53-objetos-del-mundo)
 
 7. [Experiencia de juego](#6-experiencia-de-juego)  
