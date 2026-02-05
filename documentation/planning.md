@@ -91,7 +91,7 @@
 - Objetivos:
     - Librerías compiladas y compilación automática
     - Primeros componentes sencillos (¡incluso vacíos\!).
-    - Cargar mapas básicos (lua) con esos componentes.
+    - Prototipo de carga de mapas básicos con esos componentes (LUA).
     - “Juegos” en los repositorios con “componentes” (aunque sean vacíos) cargados desde mapas.
     - Puesta en marcha y bucle principal.  
     - Escenas (idealmente con alguna malla que vayamos a utilizar renderizada)
@@ -102,7 +102,6 @@
 - Fecha límite: Martes 14 de abril.
 - Objetivos:
     - Componentes y resto del motor.
-    - Prototipo de carga de mapas a través de LUA.
     - Avances (medianos/grandes) en los juegos.
 
 <!-- TOC --><a name="hito-3"></a>

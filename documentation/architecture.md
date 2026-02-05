@@ -708,3 +708,158 @@ Cada componente es creado y almacenado en el ComponentManager utilizando estruct
 
 D. Incorporación a la escena y ejecución
 Una vez completada la carga, las entidades pasan a formar parte de la escena activa y pueden ser procesadas por los distintos sistemas del motor durante el bucle principal.
+
+1. Resumen de Recursos
+	Módulo	Recurso	Herramienta	AssetsRaw	AssetsBuilt
+	Render (OGRE)	Modelos 3D	Blender	.fbx	.mesh
+	Render (OGRE)	Texturas	GIMP / Photoshop	.png	.dds
+	Render (OGRE)	Materiales	Editor de texto	.material	.material
+	Físicas	Colliders	Editor de texto (LUA)	.lua	.collider
+	Input (SDL)	Mappings	Editor de texto (LUA)	.lua	.input
+	Scripting (LUA)	Gameplay / IA	Editor de texto	.lua	.luac
+	Audio (FMOD)	Sonido / Música	Audacity / LMMS	.wav	.ogg
+
+2. Pipeline por Tipo de Recurso
+	2.1 Modelos 3D (Render - OGRE)
+   
+		Herramienta: Blender
+		AssetsRaw: .fbx
+		
+		Proceso
+		
+		Creación del modelo en Blender
+		
+		Exportación a formato .fbx
+		
+		El AssetBuilder convierte .fbx a .mesh
+		El motor carga la malla mediante OGRE
+		
+		AssetsBuilt: .mesh
+
+	2.2 Texturas (Render - OGRE)
+	
+		Herramienta: 
+		AssetsRaw: .png
+		
+		Proceso
+		
+		Creación de la textura
+		
+		Exportación a .png
+		
+		El AssetBuilder convierte a .dds y optimiza la textura
+		
+		OGRE carga la textura a través del sistema de materiales
+		
+		AssetsBuilt: .dds
+	
+	2.3 Materiales (Render - OGRE)
+	
+		Herramienta: Editor de texto
+		AssetsRaw: .material
+		
+		Proceso
+		
+		Definición del material mediante scripts OGRE
+		
+		Validación por el AssetBuilder
+		
+		Copia al directorio de AssetsBuilt
+		
+		AssetsBuilt: .material
+	
+	2.4 Colliders (Sistema de Físicas)
+	
+		Herramienta: Editor de texto (LUA)
+		AssetsRaw: .lua
+		
+		Ejemplo:
+		
+		return {
+		  type = "box",
+		  width = 1.0,
+		  height = 2.0,
+		  depth = 1.0
+		}
+		Proceso
+		
+		Definición de datos de colisión en LUA
+		
+		Validación del script por el AssetBuilder
+		
+		Conversión a formato binario .collider
+		
+		Carga por el sistema de físicas
+		
+		AssetsBuilt: .collider
+	
+	2.5 Configuración de Input (SDL)
+	
+		Herramienta: Editor de texto (LUA)
+		AssetsRaw: .lua
+		
+		Ejemplo:
+		
+		return {
+		  jump = "SPACE",
+		  move_left = "A"
+		}
+		Proceso
+		
+		Definición de mappings en LUA
+		
+		Validación por el AssetBuilder
+		
+		Conversión a formato interno .input
+		
+		Carga por el sistema de input basado en SDL
+		
+		AssetsBuilt: .input
+	
+	2.6 Scripts de Gameplay (LUA)
+	
+		Herramienta: Editor de texto
+		AssetsRaw: .lua
+		
+		Proceso
+		
+		Escritura de scripts de gameplay
+		
+		Validación sintáctica
+		
+		Compilación a bytecode LUA (.luac)
+		
+		Carga por el sistema de scripting
+		
+		AssetsBuilt: .luac
+	
+	2.7 Audio (FMOD)
+	
+		Herramienta: Audacity / LMMS
+		AssetsRaw: .wav
+		
+		Proceso
+		
+		Creación de sonido o música
+		
+		Exportación a .wav
+		
+		Conversión a .ogg mediante AssetBuilder
+		
+		Carga por FMOD
+		
+		AssetsBuilt: .ogg
+
+5. AssetBuilder
+
+	El AssetBuilder es una herramienta propia desarrollada como parte del proyecto. Su función es automatizar el procesamiento de recursos.
+	
+	Responsabilidades
+	
+	Validación de archivos
+	
+	Conversión de formatos
+	
+	Optimización básica
+	
+	Generación de AssetsBuilt

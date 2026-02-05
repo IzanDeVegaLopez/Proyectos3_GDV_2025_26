@@ -79,7 +79,7 @@ Circuitos pequeños y cerrados en entornos estilizados, combinando zonas abierta
 Completar un número determinado de vueltas antes que los contrincantes. Para ello, el jugador debe atravesar todo el circuito y pasar la línea de salida y meta tantas veces como vueltas haya.
 
 ### 2.2. Ciclo de juego
-![Diagrama de flujo](https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/GameLoop.png)
+![Diagrama de flujo](SkyvengerImages/GameLoop.png)
 
 1. Menú principal
 2. Comenzar carrera
@@ -120,28 +120,28 @@ La interfaz del juego mostrará tres elementos de interés:
 - El tiempo total transcurrido.
 - (Opcional) Su posición en el ranking.
 
-<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/HUD.png" alt="HUD" />
+<img src="SkyvengerImages/HUD.png" alt="HUD" />
 
 ### 4.4. Menús  
 - **Menú principal**
    - Jugar.
    - Salir.
 
-<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/MenuInicio.png" alt="Menú Principal" />
+<img src="SkyvengerImages/MenuInicio.png" alt="Menú Principal" />
 
 
 - **Menú de pausa**
    - Continuar.
    - Menú principal.
 
-<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/MenuPausa.png" alt="Menú de Pausa" />
+<img src="SkyvengerImages/MenuPausa.png" alt="Menú de Pausa" />
 
 - **Menú de fin de Juego**
    - Ranking
    - Volver a jugar.
    - Menú principal.
 
-<img src="https://github.com/Proyectos3_GDV_2025_26/blob/main/games/SkyvengerImages/MenuFin.png" alt="Menú de Fin de juego" />
+<img src="SkyvengerImages/MenuFin.png" alt="Menú de Fin de juego" />
 
 ## 5. Mundo del juego  
 
@@ -157,7 +157,11 @@ Aviones con diferente gama cromática.
   //imágenes próximamente
 
 ### 5.2. Niveles  
-Circuitos cerrados, con obstáculos y diferentes caminos a superar.
+Circuitos cerrados, con obstáculos y diferentes caminos a superar. Como inspiración tomaremos los circuitos de la saga Mario Kart y de la Fórmula 1.
+
+<img src="SkyvengerImages/InspiracionMarioKart.webp" alt="Circuito MK" />
+
+<img src="SkyvengerImages/InspirationLevels.jpg" alt="Circuitos F1 2025" />
 
 ## 6. Experiencia de juego  
 **Dinámicas Buscadas**
@@ -189,6 +193,9 @@ Los aviones comienzan cada carrera desde la línea de salida y meta. A lo largo 
 - Wii Sports Resort (2009), los juegos relacionados a Vuelo Turístico y Combate en Vuelo
 - Avicii Gravity HD (2013)
 - Alan Walker – The Aviation Game (2019)
+- Saga Mario Kart (Nintendo)
+- Fórmula 1
+
 
 ##  9. Testing
 
