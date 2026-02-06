@@ -1,0 +1,88 @@
+{
+    "version": 9,
+    "configurePresets": [
+        {
+            "name": "x64",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "warnings": {
+                "uninitialized": true
+            },
+            "errors": {
+                "dev": true
+            },
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },            
+            "cacheVariables": {
+                "CMAKE_C_STANDARD": "11",
+                "CMAKE_C_STANDARD_REQUIRED": "ON",
+                "CMAKE_C_EXTENSIONS": "OFF",
+
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/bin/${presetName}",
+                "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/lib/bin/${presetName}",
+                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/lib/bin/${presetName}"
+            }
+        },
+        {
+            "name": "debug-x64",
+            "hidden": true,
+            "inherits": "x64",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_DEBUG_POSTFIX": "_d"
+            }
+        },
+        {
+            "name": "release-x64",
+            "hidden": true,
+            "inherits": "x64",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug-x64",
+            "configurePreset": "debug-x64",
+            "configuration": "Debug",
+            "cleanFirst": true
+        },
+        {
+            "name": "release-x64",
+            "configurePreset": "release-x64",
+            "configuration": "Release",
+            "cleanFirst": true
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "debug-x64",
+            "steps": [
+                {
+                    "name": "debug-x64",
+                    "type": "configure"
+                },
+                {
+                    "name": "debug-x64",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "release-x64",
+            "steps": [
+                {
+                    "name": "release-x64",
+                    "type": "configure"
+                },
+                {
+                    "name": "release-x64",
+                    "type": "build"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "version": 9,
+    "configurePresets": [
+        {
+            "name": "clang-x64",
+            "hidden": true,
+            "inherits": "x64",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang"
+            }
+        },
+        {
+            "name": "clang-debug-x64",
+            "inherits": ["clang-x64", "debug-x64"]
+        },
+        {
+            "name": "clang-release-x64",
+            "inherits": ["clang-x64", "release-x64"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "clang-debug-x64",
+            "configurePreset": "clang-debug-x64",
+            "inherits": "debug-x64"
+        },
+        {
+            "name": "clang-release-x64",
+            "configurePreset": "clang-release-x64",
+            "inherits": "release-x64"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "clang-debug-x64",
+            "steps": [
+                {
+                    "name": "clang-debug-x64",
+                    "type": "configure"
+                },
+                {
+                    "name": "clang-debug-x64",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "clang-release-x64",
+            "steps": [
+                {
+                    "name": "clang-release-x64",
+                    "type": "configure"
+                },
+                {
+                    "name": "clang-release-x64",
+                    "type": "build"
+                }
+            ]
+        }
+    ]
+}
