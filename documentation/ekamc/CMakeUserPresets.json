@@ -1,22 +1,53 @@
 {
-    "version": 9,
+    "version": 10,
+    "$comment": [
+        "This is a `CMakeUserPresets.json` file. It defines a set of USER PRESETS to configure and build your project.",
+        "A `CMakeUserPresets.json` file is NOT INTENDED TO BE COMMITTED TO THE REPOSITORY.",
+        "`CMakeUserPresets.json` IS TO BE ADDED TO THE `.gitignore`.",
+
+        "This file can work in collaboration with a `CMakePresets.json` file if it exists in your project.",
+        "As we have seen, in ``CMakePresets.json`` we have defined most of the configuration for our project.",
+        "That configuration is what we wanted to be common for all members of the team, and for all machines.",
+
+        "Now, here we can specify our preferred build system, compiler, and other settings specific to us."
+    ],
     "configurePresets": [
         {
-            "name": "clang-x64",
+            "name": "clang",
             "hidden": true,
-            "inherits": "x64",
+            "inherits": "default",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang"
-            }
+            },
+
+            "$comment": [
+                "I use clang as my compiler, and I prefer to use Ninja as my build system. So I specify that here.",
+                "Most of the configuration is already set up by the `default` preset in `CMakePresets.json`, ",
+                "so I just inherit from it and add my specific configuration here.",
+
+                "Same thing I do further down in this file for `buildPresets` and `workflowPresets`.",
+                "Note that you can inherit from multiple presets, and you can also have presets to ",
+                "combine their configuration. But be careful they are exclusive about what settings they set.",
+                "So that they can be combined together without conflicts."
+            ]
         },
+
         {
             "name": "clang-debug-x64",
-            "inherits": ["clang-x64", "debug-x64"]
+            "inherits": ["clang", "debug-x64"]
         },
         {
             "name": "clang-release-x64",
-            "inherits": ["clang-x64", "release-x64"]
+            "inherits": ["clang", "release-x64"]
+        },
+        {
+            "name": "clang-debug-x86",
+            "inherits": ["clang", "debug-x86"]
+        },
+        {
+            "name": "clang-release-x86",
+            "inherits": ["clang", "release-x86"]
         }
     ],
     "buildPresets": [
@@ -29,6 +60,16 @@
             "name": "clang-release-x64",
             "configurePreset": "clang-release-x64",
             "inherits": "release-x64"
+        },
+        {
+            "name": "clang-debug-x86",
+            "configurePreset": "clang-debug-x86",
+            "inherits": "debug-x86"
+        },
+        {
+            "name": "clang-release-x86",
+            "configurePreset": "clang-release-x86",
+            "inherits": "release-x86"
         }
     ],
     "workflowPresets": [
@@ -54,6 +95,32 @@
                 },
                 {
                     "name": "clang-release-x64",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "clang-debug-x86",
+            "steps": [
+                {
+                    "name": "clang-debug-x86",
+                    "type": "configure"
+                },
+                {
+                    "name": "clang-debug-x86",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "clang-release-x86",
+            "steps": [
+                {
+                    "name": "clang-release-x86",
+                    "type": "configure"
+                },
+                {
+                    "name": "clang-release-x86",
                     "type": "build"
                 }
             ]

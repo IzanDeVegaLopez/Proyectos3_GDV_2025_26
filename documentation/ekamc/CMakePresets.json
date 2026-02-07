@@ -1,8 +1,19 @@
 {
-    "version": 9,
+    "version": 10,
+    "$comment": [
+        "This is a `CMakePresets.json` file. It defines a set of COMMON PRESETS to configure and build your project.",
+        "A `CMakePresets.json` file is INTENDED TO BE COMMITTED TO THE REPOSITORY.",
+        "It should not contain any machine or user specific configuration. `CMakeUserPresets.json` is the file for that.",
+        "For example, you should not specify the compiler path here, as it may differ from one machine to another.",
+
+        "Basically, this file should contain a JSON object with three arrays: `configurePresets`, `buildPresets` and `workflowPresets`.",
+        "`configurePresets`: contains presets for the CMake cache variables about DIRECTORIES IN YOUR PROJECT and other settings.",
+        "`buildPresets`: contains presets for the different build 'modes', Release, Debug, etc.",
+        "`workflowPresets`: contains presets for running a sequence of other presets back to back in one command."
+    ],
     "configurePresets": [
         {
-            "name": "x64",
+            "name": "default",
             "hidden": true,
             "binaryDir": "${sourceDir}/build/${presetName}",
             "warnings": {
@@ -11,10 +22,6 @@
             "errors": {
                 "dev": true
             },
-            "architecture": {
-                "value": "x64",
-                "strategy": "external"
-            },            
             "cacheVariables": {
                 "CMAKE_C_STANDARD": "11",
                 "CMAKE_C_STANDARD_REQUIRED": "ON",
@@ -23,38 +30,131 @@
                 "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/bin/${presetName}",
                 "CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/lib/bin/${presetName}",
                 "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/lib/bin/${presetName}"
+            },
+
+            "$comment": [
+                "This base preset defines the most amount of common configuration for all other presets to inherit from.",
+                "And for all members of the team.",
+                "`binaryDir`: is equivalent to the `-B` argument of the `cmake` command. It specifies where the build files will be generated.",
+
+                "Important `cacheVariables` that we are setting here are:",
+                "`CMAKE_C_STANDARD`: sets the C standard to be used for compiling C files.",
+                "`CMAKE_C_STANDARD_REQUIRED`: tells CMake that the specified C standard is required.",
+                "`CMAKE_C_EXTENSIONS`: tells CMake whether to allow compiler-specific extensions.",
+                "Disabling it ensures all code compiles and is supported by all members' compilers.",
+                "<CXX> in the variable would be the same but for C++ files.",
+
+                "`CMAKE_RUNTIME_OUTPUT_DIRECTORY`, ",
+                "`CMAKE_LIBRARY_OUTPUT_DIRECTORY` and ",
+                "`CMAKE_ARCHIVE_OUTPUT_DIRECTORY`: these variables specify where the compiled executables and libraries will be placed.",
+
+                "After setting all these directories, all members of the team will have the same directory structure.",
+                "`bin/` for executables",
+                "`lib/bin/` for libraries,",
+                "and `build/` for build files",
+                "THESE ARE THE DIRECTORIES THAT ARE TO BE IGNORED IN THE `.gitignore`. And we know it is safe to delete them"
+            ]
+        },
+
+        {
+            "name": "x64",
+            "hidden": true,
+            "inherits": "default",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
             }
         },
         {
-            "name": "debug-x64",
+            "name": "x86",
             "hidden": true,
-            "inherits": "x64",
+            "inherits": "default",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_RELEASE_POSTFIX": "_x86"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_DEBUG_POSTFIX": "_d"
             }
         },
         {
-            "name": "release-x64",
+            "name": "release",
             "hidden": true,
-            "inherits": "x64",
+            "inherits": "default",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            },
+            
+            "$comment": [
+                "Here we are setting an 'inheritance chain' to define more presets with more specific configurations.",
+                "`CMAKE_DEBUG_POSTFIX`: is the suffix that will be added to the name of the ",
+                "generated executable or library when building in Debug mode. So all presets that inherit from `debug` will have this postfix."
+            ]
+        },
+        
+
+        {
+            "name": "debug-x64",
+            "inherits": ["debug", "x64"]
+        },
+        {
+            "name": "release-x64",
+            "inherits": ["release", "x64"]
+        },
+        {
+            "name": "debug-x86",
+            "inherits": ["debug", "x86"],
+            "cacheVariables": {
+                "CMAKE_DEBUG_POSTFIX": "_d_x86"
             }
+        },
+        {
+            "name": "release-x86",
+            "inherits": ["release", "x86"]
         }
     ],
     "buildPresets": [
         {
-            "name": "debug-x64",
-            "configurePreset": "debug-x64",
+            "name": "debug",
+            "hidden": true,
             "configuration": "Debug",
             "cleanFirst": true
         },
         {
-            "name": "release-x64",
-            "configurePreset": "release-x64",
+            "name": "release",
+            "hidden": true,
             "configuration": "Release",
             "cleanFirst": true
+        },
+
+        {
+            "name": "debug-x64",
+            "inherits": "debug",
+            "configurePreset": "debug-x64"
+        },
+        {
+            "name": "release-x64",
+            "inherits": "release",
+            "configurePreset": "release-x64"
+        },
+        {
+            "name": "debug-x86",
+            "inherits": "debug",
+            "configurePreset": "debug-x86"
+        },
+        {
+            "name": "release-x86",
+            "inherits": "release",
+            "configurePreset": "release-x86"
         }
     ],
     "workflowPresets": [
@@ -80,6 +180,32 @@
                 },
                 {
                     "name": "release-x64",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "debug-x86",
+            "steps": [
+                {
+                    "name": "debug-x86",
+                    "type": "configure"
+                },
+                {
+                    "name": "debug-x86",
+                    "type": "build"
+                }
+            ]
+        },
+        {
+            "name": "release-x86",
+            "steps": [
+                {
+                    "name": "release-x86",
+                    "type": "configure"
+                },
+                {
+                    "name": "release-x86",
                     "type": "build"
                 }
             ]
